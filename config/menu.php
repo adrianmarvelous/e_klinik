@@ -1,14 +1,14 @@
 <?php
     return [
         'admin' => [
-            ['name' => 'Dashboard', 'route' => 'admin.dashboard','icon' => 'home'],
             ['name' => 'Manage Users', 'route' => 'users.index','icon' => 'users'],
+            ['name' => 'Appoinment', 'route' => 'appoinment.index','icon' => 'calendar'],
         ],
         'doctor' => [
-            ['name' => 'Appointments', 'route' => 'appointments.index','icon' => 'calendar'],
+            ['name' => 'Appointments', 'route' => 'users.index','icon' => 'calendar'],
         ],
         'patient' => [
-            ['name' => 'Book Appointment', 'route' => 'booking.index'],
+            ['name' => 'Book Appointment', 'route' => 'booking.index','icon' => 'users'],
         ],
     ];
 

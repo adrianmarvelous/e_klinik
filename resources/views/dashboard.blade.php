@@ -29,7 +29,9 @@
             },
         });
     </script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ asset('templetes/kaiadmin-lite/assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('templetes/kaiadmin-lite/assets/css/plugins.min.css') }}" />
@@ -41,6 +43,41 @@
 </head>
 
 <body>
+    {{-- ✅ Success --}}
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+            confirmButtonText: 'OK' // tulisan tombol
+        });
+    </script>
+    @endif
+
+
+    {{-- ❌ Error dari session (catch di controller) --}}
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: "{{ session('error') }}",
+        });
+    </script>
+    @endif
+
+    {{-- ⚠️ Error dari Laravel validation --}}
+    @if ($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal!',
+            html: `{!! implode('<br>', $errors->all()) !!}`, // tampilkan semua error dalam 1 popup
+        });
+    </script>
+    @endif
+
     <div class="wrapper">
         <!-- Sidebar -->
         <div class="sidebar sidebar-style-2" data-background-color="dark">
@@ -93,7 +130,7 @@
                         @foreach(config('menu.'.auth()->user()->getRoleNames()->first()) as $menu)
                             {{-- <li><a href="{{ route($menu['route']) }}">{{ $menu['name'] }}</a></li> --}}
                             <li class="nav-item">
-                                <a href="widgets.html">
+                                <a href="{{ route($menu['route']) }}">
                                     <i class="fas fa-{{ $menu['icon'] }}"></i>
                                     <p>{{ $menu['name'] }}</p>
                                     {{-- <span class="badge badge-success">4</span> --}}
@@ -113,7 +150,7 @@
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
                         <a href="index.html" class="logo">
-                            <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand"
+                            <img src="{{ asset('templetes/kaiadmi-lite/assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
                                 height="20" />
                         </a>
                         <div class="nav-toggle">
@@ -178,7 +215,7 @@
                                             <div class="notif-center">
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="assets/img/jm_denis.jpg" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaidamin-lite/assets/img/jm_denis.jpg') }}" alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Jimmy Denis</span>
@@ -188,7 +225,7 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="assets/img/chadengle.jpg" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/chadengle.jpg') }} " alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Chad</span>
@@ -363,12 +400,12 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="assets/img/profile.jpg" alt="..."
+                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}" alt="..."
                                             class="avatar-img rounded-circle" />
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold">Hizrian</span>
+                                        <span class="fw-bold">{{ session('user.name') }}</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -376,22 +413,20 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <img src="assets/img/profile.jpg" alt="image profile"
+                                                    <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}" alt="image profile"
                                                         class="avatar-img rounded" />
                                                 </div>
                                                 <div class="u-text">
-                                                    <h4>Hizrian</h4>
-                                                    <p class="text-muted">hello@example.com</p>
-                                                    <a href="profile.html"
-                                                        class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                                    <h4>{{ session('user.name') }}</h4>
+                                                    <p class="text-muted">{{ session('user.email') }}</p>
+                                                    {{-- <a href="profile.html"
+                                                        class="btn btn-xs btn-secondary btn-sm">View Profile</a> --}}
                                                 </div>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">My Profile</a>
-                                            <a class="dropdown-item" href="#">My Balance</a>
-                                            <a class="dropdown-item" href="#">Inbox</a>
+                                            {{-- <a class="dropdown-item" href="{{ route('patient.show',['patient' => session('user.id')]) }}">My Profile</a> --}}
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
@@ -416,14 +451,97 @@
 
             <div class="container">
                 <div class="page-inner">
-                    
+                    <div class="page-header">
+                        @php
+                            $segments = Request::segments();
+                        @endphp
+
+                        <ul class="breadcrumbs mb-3">
+                            {{-- Home --}}
+                            <li class="nav-home">
+                                <a href="{{ url('/') }}">
+                                    <i class="icon-home"></i>
+                                </a>
+                            </li>
+
+                            @foreach($segments as $index => $segment)
+                                {{-- separator --}}
+                                <li class="separator">
+                                    <i class="icon-arrow-right"></i>
+                                </li>
+
+                                {{-- breadcrumb item --}}
+                                <li class="nav-item {{ $loop->last ? 'active' : '' }}">
+                                    @php
+                                        $url = url(implode('/', array_slice($segments, 0, $index + 1)));
+
+                                        // Replace numeric segments with "Show"
+                                        $label = is_numeric($segment) ? 'Show' : ucfirst($segment);
+                                    @endphp
+
+                                    @if(!$loop->last)
+                                        <a href="{{ $url }}">{{ $label }}</a>
+                                    @else
+                                        <span>{{ $label }}</span>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+
+                    </div>
+              
+                    @if (Route::current()->getName() == 'dashboard')
+                        <div class="row">
+                            <div class="col-sm-6 col-md-3">
+                                <a href="{{ route('appoinment.create') }}">
+                                    <div class="card card-stats card-primary card-round">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-5">
+                                                    <div class="icon-big text-center">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="col-7 col-stats">
+                                                    <div class="numbers">
+                                                    <h3 class="card-title">Book Appointment</h3>
+                                                    {{-- <h4 class="card-title">1,294</h4> --}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="card card-stats card-info card-round">
+                                    <div class="card-body">
+                                        <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon-big text-center">
+                                            <i class="fas fa-history"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7 col-stats">
+                                            <div class="numbers">
+                                            <h3 class="card-title">Medial History</h3>
+                                            {{-- <h4 class="card-title">1,294</h4> --}}
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    @yield('content')
                 </div>
             </div>
 
             <footer class="footer">
                 <div class="container-fluid d-flex justify-content-between">
-                    {{-- <nav class="pull-left">
-                        <ul class="nav">
+                    <nav class="pull-left">
+                        {{-- <ul class="nav">
                             <li class="nav-item">
                                 <a class="nav-link" href="http://www.themekita.com">
                                     ThemeKita
@@ -435,16 +553,17 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#"> Licenses </a>
                             </li>
-                        </ul>
+                        </ul> --}}
                     </nav>
                     <div class="copyright">
-                        2024, made with <i class="fa fa-heart heart text-danger"></i> by
-                        <a href="http://www.themekita.com">ThemeKita</a>
+                        E-Klinik
+                        {{-- 2024, made with <i class="fa fa-heart heart text-danger"></i> by
+                        <a href="http://www.themekita.com">ThemeKita</a> --}}
                     </div>
                     <div>
-                        Distributed by
-                        <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
-                    </div> --}}
+                        {{-- Distributed by
+                        <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>. --}}
+                    </div>
                 </div>
             </footer>
         </div>
@@ -517,45 +636,51 @@
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/bootstrap.min.js') }}"></script>
-    {{-- <script src="assets/js/core/jquery-3.7.1.min.js"></script>
-        <script src="assets/js/core/popper.min.js"></script>
-        <script src="assets/js/core/bootstrap.min.js"></script> --}}
-
-    <!-- jQuery Scrollbar -->
-    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}">
+    
+    {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}">
     </script>
 
-    <!-- Chart JS -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/chart.js/chart.min.js') }}"></script>
 
-    <!-- jQuery Sparkline -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}">
     </script>
 
-    <!-- Chart Circle -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
+
+    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}">
+    </script>
+
+    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
+    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jsvectormap/world.js') }}"></script> --}}
 
     <!-- Datatables -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/datatables/datatables.min.js') }}"></script>
 
-    <!-- Bootstrap Notify -->
-    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}">
-    </script>
-
-    <!-- jQuery Vector Maps -->
-    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jsvectormap/world.js') }}"></script>
-
     <!-- Sweet Alert -->
-    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+    {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script> --}}
+
 
     <!-- Kaiadmin JS -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/kaiadmin.min.js') }}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+    <script>
+      $(function () {
+        $('#summernote').summernote({
+          height: 200,
+          toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['insert', ['table']],
+            ['view', ['codeview']]
+          ]
+        });
+      });
+    </script>
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/setting-demo.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/demo.js') }}"></script> --}}
-    <script>
+    {{-- <script>
         $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
             type: "line",
             height: "70",
@@ -582,7 +707,7 @@
             lineColor: "#ffa534",
             fillColor: "rgba(255, 165, 52, .14)",
         });
-    </script>
+    </script> --}}
 </body>
 
 </html>

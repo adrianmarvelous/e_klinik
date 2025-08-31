@@ -2,14 +2,31 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Medical\Appoinment;
+use App\Http\Controllers\UserController;
+
+Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // ✅ Resource route untuk Patient
+    Route::resource('patient', PatientController::class);
+    Route::resource('appoinment', Appoinment::class);
+    Route::resource('users', UserController::class);
+    Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
