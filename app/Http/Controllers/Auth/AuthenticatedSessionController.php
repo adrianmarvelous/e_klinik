@@ -37,8 +37,33 @@ class AuthenticatedSessionController extends Controller
             'email' => $user->email,
             'roles' => $user->getRoleNames(), // Spatie roles
         ]);
+        
+        // Assign default role ONLY if user truly has no role
+        if (method_exists($user, 'assignRole') && $user->roles->isEmpty()) {
+            $user->assignRole('patient');
+        }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+
+        // ✅ Login the user
+        Auth::login($user);
+        
+        // ✅ Redirect based on role & relation (only one role will match)
+        if ($user->hasRole('patient')) {
+            return redirect()->route($user->patient ? 'dashboard' : 'patient.create');
+        } 
+        elseif ($user->hasRole('doctor')) {
+            return redirect()->route($user->doctor ? 'dashboard' : 'doctor.create');
+        } 
+        elseif ($user->hasRole('admin')) {
+            return redirect()->route('dashboard');
+        }
+
+        // fallback
+        return redirect()->route('dashboard');
+
+
+
+        // return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

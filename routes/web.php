@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Medical\Appoinment;
 use App\Http\Controllers\UserController;
 
@@ -23,6 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ✅ Resource route untuk Patient
     Route::resource('patient', PatientController::class);
+    Route::resource('doctor', DoctorController::class);
+    Route::get('/appoinment/schedule', [Appoinment::class, 'schedule'])->name('appoinment.schedule');
     Route::resource('appoinment', Appoinment::class);
     Route::resource('users', UserController::class);
     Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');

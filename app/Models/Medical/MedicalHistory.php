@@ -3,6 +3,7 @@
 namespace App\Models\Medical;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Roles\Patient;
 
 class MedicalHistory extends Model
 {
@@ -12,4 +13,9 @@ class MedicalHistory extends Model
         'type',
         'description',
     ];
+    
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }

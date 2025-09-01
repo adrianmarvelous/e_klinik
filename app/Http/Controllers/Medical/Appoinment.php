@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Rules\SafeInput;
 use App\Models\Medical\MedicalHistory;
 use App\Models\Roles\Patient;
+use App\Models\User;
 
 class Appoinment extends Controller
 {
@@ -16,7 +17,15 @@ class Appoinment extends Controller
      */
     public function index()
     {
-        //
+        $users = MedicalHistory::with('patient.user')->get();
+        
+        return view('appoinment.index',compact('users'));
+    }
+    public function schedule()
+    {
+        $doctors = User::role('doctor')->get();
+
+        return view('appoinment.schedule',compact('doctors'));
     }
 
     /**

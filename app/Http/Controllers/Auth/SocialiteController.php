@@ -47,24 +47,26 @@ class SocialiteController extends Controller
 
             // ✅ Assign default role if none
             if (method_exists($user, 'assignRole') && !$user->hasAnyRole()) {
-                $user->assignRole('patient'); // make sure "user" role exists
+                $user->assignRole('patient');
             }
 
             // ✅ Login the user
             Auth::login($user);
 
-            // ✅ Kalau user punya role "patient"
+            // ✅ Redirect based on role & relation (only one role will match)
             if ($user->hasRole('patient')) {
-                if ($user->patient) {
-                    return redirect()->route('dashboard'); // sudah punya data pasien
-                } else {
-                    return redirect()->route('patient.create'); // belum punya data pasien
-                }
+                return redirect()->route($user->patient ? 'dashboard' : 'patient.create');
+            } 
+            elseif ($user->hasRole('doctor')) {
+                return redirect()->route($user->doctor ? 'dashboard' : 'doctor.create');
+            } 
+            elseif ($user->hasRole('admin')) {
+                return redirect()->route('dashboard');
             }
 
+            // fallback
+            return redirect()->route('dashboard');
 
-            // return redirect()->intended('/dashboard');
-            return redirect()->route('dashboard'); // sudah punya data pasien
 
         } catch (\Exception $e) {
             // Log error and redirect back with message

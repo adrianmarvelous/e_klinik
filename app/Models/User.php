@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Roles\Patient;
+use App\Models\Roles\Doctor;
 
 
 class User extends Authenticatable
@@ -49,6 +50,10 @@ class User extends Authenticatable
     }
     // app/Models/User.php
     public function patient()
+    {
+        return $this->hasOne(Patient::class, 'user_id');
+    }
+    public function doctor()
     {
         return $this->hasOne(Patient::class, 'user_id');
     }

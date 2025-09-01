@@ -43,6 +43,9 @@
 </head>
 
 <body>
+    {{-- @php
+        dd(session()->all());
+    @endphp --}}
     {{-- ✅ Success --}}
     @if(session('success'))
     <script>
@@ -426,8 +429,10 @@
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-                                            {{-- <a class="dropdown-item" href="{{ route('patient.show',['patient' => session('user.id')]) }}">My Profile</a> --}}
-                                            <div class="dropdown-divider"></div>
+                                            @if (session('user.role') == 'patient')
+                                                <a class="dropdown-item" href="{{ route('patient.show',['patient' => session('user.id')]) }}">My Profile</a>
+                                                <div class="dropdown-divider"></div>
+                                            @endif
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="{{ route('logout') }}"
@@ -491,48 +496,51 @@
                     </div>
               
                     @if (Route::current()->getName() == 'dashboard')
-                        <div class="row">
-                            <div class="col-sm-6 col-md-3">
-                                <a href="{{ route('appoinment.create') }}">
-                                    <div class="card card-stats card-primary card-round">
+                    
+                        @if (session('user.role') == 'patient')
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3">
+                                    <a href="{{ route('appoinment.create') }}">
+                                        <div class="card card-stats card-primary card-round">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-5">
+                                                        <div class="icon-big text-center">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-7 col-stats">
+                                                        <div class="numbers">
+                                                        <h3 class="card-title">Book Appointment</h3>
+                                                        {{-- <h4 class="card-title">1,294</h4> --}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-sm-6 col-md-3">
+                                    <div class="card card-stats card-info card-round">
                                         <div class="card-body">
                                             <div class="row">
-                                                <div class="col-5">
-                                                    <div class="icon-big text-center">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                    </div>
-                                                </div>
-                                                <div class="col-7 col-stats">
-                                                    <div class="numbers">
-                                                    <h3 class="card-title">Book Appointment</h3>
-                                                    {{-- <h4 class="card-title">1,294</h4> --}}
-                                                    </div>
+                                            <div class="col-5">
+                                                <div class="icon-big text-center">
+                                                <i class="fas fa-history"></i>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-sm-6 col-md-3">
-                                <div class="card card-stats card-info card-round">
-                                    <div class="card-body">
-                                        <div class="row">
-                                        <div class="col-5">
-                                            <div class="icon-big text-center">
-                                            <i class="fas fa-history"></i>
+                                            <div class="col-7 col-stats">
+                                                <div class="numbers">
+                                                <h3 class="card-title">Medial History</h3>
+                                                {{-- <h4 class="card-title">1,294</h4> --}}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-7 col-stats">
-                                            <div class="numbers">
-                                            <h3 class="card-title">Medial History</h3>
-                                            {{-- <h4 class="card-title">1,294</h4> --}}
                                             </div>
-                                        </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     @endif
                     @yield('content')
                 </div>
@@ -655,6 +663,12 @@
 
     <!-- Datatables -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/datatables/datatables.min.js') }}"></script>
+	<script >
+		$(document).ready(function() {
+			$('#basic-datatables').DataTable({
+			});
+        })
+    </script>
 
     <!-- Sweet Alert -->
     {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script> --}}

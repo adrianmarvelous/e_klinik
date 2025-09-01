@@ -8,7 +8,7 @@
             ['name' => 'Appointments', 'route' => 'users.index','icon' => 'calendar'],
         ],
         'patient' => [
-            ['name' => 'Book Appointment', 'route' => 'booking.index','icon' => 'users'],
+            ['name' => 'Book Appointment', 'route' => 'appoinment.index','icon' => 'users'],
         ],
     ];
 

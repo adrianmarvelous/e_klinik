@@ -45,6 +45,12 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+        // Store user info + role into session
+        session()->put('user', [
+            'name'  => $user->name,
+            'email' => $user->email,
+            'roles' => $user->getRoleNames(), // Spatie roles
+        ]);
 
         return redirect(route('dashboard', absolute: false));
     }
