@@ -9,6 +9,7 @@ use App\Rules\SafeInput;
 use App\Models\Medical\MedicalHistory;
 use App\Models\Roles\Patient;
 use App\Models\User;
+use App\Models\Appoinment\Appoinments;
 
 class Appoinment extends Controller
 {
@@ -21,11 +22,11 @@ class Appoinment extends Controller
         
         return view('appoinment.index',compact('users'));
     }
-    public function schedule()
+    public function schedule($patient_id)
     {
         $doctors = User::role('doctor')->get();
 
-        return view('appoinment.schedule',compact('doctors'));
+        return view('appoinment.schedule',compact('doctors','patient_id'));
     }
 
     /**
@@ -35,7 +36,43 @@ class Appoinment extends Controller
     {
         return view('appoinment.create');
     }
+    public function save_schedule(Request $request)
+    {
+        $validated = $request->validate([
+            'patient_id'  => ['required', 'numeric', new SafeInput],
+            'doctor_id'   => ['required', 'numeric', new SafeInput],
+            'date'        => ['required', 'date', new SafeInput],
+            'time'        => ['required', 'date_format:H:i', new SafeInput], // e.g. 14:30
+        ]);
 
+        DB::beginTransaction();
+
+        try {
+            // Merge date + time into datetime
+            $dateTime = $validated['date'] . ' ' . $validated['time'];
+
+            $appointment = new Appoinments();
+            $appointment->patient_id = $validated['patient_id'];
+            $appointment->doctor_id  = $validated['doctor_id'];
+            $appointment->datetime  = $dateTime;
+            $appointment->save();
+
+            DB::commit();
+
+            return redirect()
+                ->route('appoinment.index')
+                ->with('success', 'Jadwal berhasil disimpan!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // biarkan Laravel handle redirect back dengan error bag
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */

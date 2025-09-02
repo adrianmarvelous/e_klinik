@@ -11,7 +11,8 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Keluhan</th>
-                            <th>tanggal</th>
+                            <th>tanggal Daftar</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -22,8 +23,9 @@
                                 <td>{{ $item->patient->user->name }}</td>
                                 <td>{!! $item->description !!}</td>
                                 <td>{{ date('d-M-Y H:i',strtotime($item->created_at)) }}</td>
+                                <td></td>
                                 <td>
-                                    <a class="btn btn-primary" href="{{ route('appoinment.schedule') }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
+                                    <a class="btn btn-primary" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
                                 </td>
                             </tr>
                         @endforeach
