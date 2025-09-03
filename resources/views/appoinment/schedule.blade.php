@@ -90,46 +90,66 @@
 
                         <!-- Date Tab Content -->
                         <div class="tab-content mt-3">
-                            @for ($d = 0; $d <= 7; $d++)
+                            @for ($d = 0; $d <= 8; $d++)
                                 @php
-                                    $date = now()->addDays($d);
-                                    $start = strtotime("08:00");
+                                    // pastikan $date adalah Carbon (start of day)
+                                    $date = \Carbon\Carbon::now()->startOfDay()->addDays($d);
                                 @endphp
+
                                 <div class="tab-pane fade {{ $d === 0 ? 'show active' : '' }}" 
-                                     id="date-{{ $doctor->id }}-{{ $d }}" 
-                                     role="tabpanel">
+                                    id="date-{{ $doctor->id }}-{{ $d }}" 
+                                    role="tabpanel">
                                     <h5>Jadwal untuk {{ $date->format('l, d M Y') }}</h5>
 
                                     <div class="row">
                                         @for ($i = 0; $i < 9; $i++)
-                                        <div class="col-lg-4 col-md-6 mb-3">
-                                            <form action="{{ route('appoinment.save_schedule') }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="patient_id" value="{{ $patient_id }}">
-                                                <input type="hidden" name="doctor_id" value="{{ $doctor->id }}">
-                                                <input type="hidden" name="date" value="{{ $date->format('Y-m-d') }}">
-                                                <input type="hidden" name="time" value="{{ date('H:i', strtotime("+$i hour", $start)) }}">
+                                            @php
+                                                // slot jam mulai 08:00 + $i jam
+                                                $slot = $date->copy()->setTime(8, 0)->addHours($i); // Carbon
 
-                                                <button type="submit" class="btn p-0 w-100 border-0 bg-transparent text-start" style="height: 150px">
-                                                    <div class="card shadow-sm h-100 hover-card bg-success-gradient">
-                                                        <div class="card-body bubble-shadow text-white">
-                                                            <div class="d-flex justify-content-between">
-                                                                <h4 class="mb-1">
-                                                                    {{ date("H:i", strtotime("+$i hour", $start)) }}
-                                                                </h4>
-                                                                <h4 class="mb-1">
-                                                                    {{ $date->format('d M Y') }}
-                                                                </h4>
+                                                // robust check: match by date + hour (ignores seconds)
+                                                $appointmentExists = optional($doctor->doctor)->appointments
+                                                    ? $doctor->doctor->appointments->contains(function ($app) use ($slot) {
+                                                        $appTime = \Carbon\Carbon::parse($app->datetime);
+                                                        return $appTime->toDateString() === $slot->toDateString()
+                                                            && $appTime->format('H:i') === $slot->format('H:i');
+                                                    })
+                                                    : false;
+                                            @endphp
+
+                                            <div class="col-lg-4 col-md-6 mb-3">
+                                                <form action="{{ route('appoinment.save_schedule') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="patient_id" value="{{ $patient_id }}">
+                                                    <input type="hidden" name="doctor_id" value="{{ optional($doctor->doctor)->id }}">
+                                                    <input type="hidden" name="medical_history_id" value="{{ $medical_history_id }}">
+                                                    <input type="hidden" name="date" value="{{ $slot->format('Y-m-d') }}">
+                                                    <input type="hidden" name="time" value="{{ $slot->format('H:i') }}">
+
+                                                    <button type="submit"
+                                                            class="btn p-0 w-100 border-0 bg-transparent text-start"
+                                                            style="height: 150px"
+                                                            @if($appointmentExists) disabled @endif>
+                                                        <div class="card shadow-sm h-100 hover-card {{ $appointmentExists ? 'bg-danger' : 'bg-success-gradient' }}">
+                                                            <div class="card-body bubble-shadow text-white">
+                                                                <div class="d-flex justify-content-between">
+                                                                    <h4 class="mb-1">{{ $slot->format('H:i') }}</h4>
+                                                                    <h4 class="mb-1">{{ $slot->format('d M Y') }}</h4>
+                                                                </div>
+                                                                <span class="badge {{ $appointmentExists ? 'bg-danger' : 'bg-success' }}">
+                                                                    {{ $appointmentExists ? 'Booked' : 'Available' }}
+                                                                </span>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </button>
-                                            </form>
-                                        </div>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @endfor
                                     </div>
                                 </div>
                             @endfor
+
+
                         </div>
                     </div>
                 @endforeach

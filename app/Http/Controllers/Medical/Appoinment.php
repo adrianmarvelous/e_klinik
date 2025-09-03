@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Medical;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Rules\SafeInput;
 use App\Models\Medical\MedicalHistory;
 use App\Models\Roles\Patient;
+use App\Models\Roles\Doctor;
 use App\Models\User;
 use App\Models\Appoinment\Appoinments;
 
@@ -18,15 +20,26 @@ class Appoinment extends Controller
      */
     public function index()
     {
-        $users = MedicalHistory::with('patient.user')->get();
+        $users = MedicalHistory::with([
+                        'patient.user',   // nested relation
+                        'appointments'    // appointments linked to this medical history
+                    ])->get();
         
         return view('appoinment.index',compact('users'));
     }
-    public function schedule($patient_id)
+    public function schedule($patient_id,$medical_history_id)
     {
-        $doctors = User::role('doctor')->get();
-
-        return view('appoinment.schedule',compact('doctors','patient_id'));
+        $doctors = User::role('doctor')
+                    ->with(['doctor.appointments' => function ($q) use ($patient_id) {
+                        $q->where('patient_id', $patient_id)
+                        ->whereBetween('datetime', [
+                            Carbon::today(),
+                            Carbon::today()->addDays(7)->endOfDay()
+                        ]);
+                    }])
+                    ->get();
+                    
+        return view('appoinment.schedule',compact('doctors','patient_id','medical_history_id'));
     }
 
     /**
@@ -41,6 +54,7 @@ class Appoinment extends Controller
         $validated = $request->validate([
             'patient_id'  => ['required', 'numeric', new SafeInput],
             'doctor_id'   => ['required', 'numeric', new SafeInput],
+            'medical_history_id'   => ['required', 'numeric', new SafeInput],
             'date'        => ['required', 'date', new SafeInput],
             'time'        => ['required', 'date_format:H:i', new SafeInput], // e.g. 14:30
         ]);
@@ -52,6 +66,7 @@ class Appoinment extends Controller
             $dateTime = $validated['date'] . ' ' . $validated['time'];
 
             $appointment = new Appoinments();
+            $appointment->medical_history_id = $validated['medical_history_id'];
             $appointment->patient_id = $validated['patient_id'];
             $appointment->doctor_id  = $validated['doctor_id'];
             $appointment->datetime  = $dateTime;

@@ -42,6 +42,7 @@ class SocialiteController extends Controller
                 'id'  => $user->id,
                 'name'  => $user->name,
                 'email' => $user->email,
+                'roles' => $user->getRoleNames(), // Spatie roles
             ]);
 
 

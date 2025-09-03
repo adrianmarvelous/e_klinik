@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Rules\SafeInput;
+use App\Models\User;
+use App\Models\Roles\Doctor;
 
 class DoctorController extends Controller
 {
@@ -28,7 +32,50 @@ class DoctorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', new SafeInput],
+            'dateofbirth' => ['required', 'date', new SafeInput],
+            'gender' => ['required', 'string', 'max:255', new SafeInput],
+            'phone' => ['required', 'string', 'max:255', new SafeInput],
+            'address' => ['required', 'string', 'max:255', new SafeInput],
+        ]);
+
+
+        try {
+            DB::transaction(function () use ($validated) {
+                // 1. Update nama di tabel users
+                $user = User::findOrFail(session('user.id'));
+                $user->update([
+                    'name' => $validated['name'],
+                ]);
+
+                // 2. Update atau buat patient
+                Doctor::updateOrCreate(
+                    ['user_id' => session('user.id')],
+                    [
+                        'date_of_birth'  => $validated['dateofbirth'],
+                        'gender'  => $validated['gender'],
+                        'phone'   => $validated['phone'],
+                        'address' => $validated['address'],
+                    ]
+                );
+            });
+            // Get current session 'user'
+            $userSession = session('user');
+
+            // Update only the name
+            $userSession['name'] = $validated['name'];
+
+            // Save back to session
+            session()->put('user', $userSession);
+
+            return redirect()
+                ->route('dashboard')
+                ->with('success', 'Doctor data updated successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update patient: ' . $e->getMessage());
+        }
     }
 
     /**

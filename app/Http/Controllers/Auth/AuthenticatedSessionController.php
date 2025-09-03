@@ -33,6 +33,7 @@ class AuthenticatedSessionController extends Controller
 
         // Store user info + role into session
         session()->put('user', [
+            'id'  => $user->id,
             'name'  => $user->name,
             'email' => $user->email,
             'roles' => $user->getRoleNames(), // Spatie roles

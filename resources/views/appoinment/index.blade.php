@@ -23,9 +23,9 @@
                                 <td>{{ $item->patient->user->name }}</td>
                                 <td>{!! $item->description !!}</td>
                                 <td>{{ date('d-M-Y H:i',strtotime($item->created_at)) }}</td>
-                                <td></td>
+                                <td style="text-transform: capitalize">{{ optional($item->appointments)->status }}</td>
                                 <td>
-                                    <a class="btn btn-primary" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
+                                    <a class="btn {{ $item->appointment ? 'btn-primary' : 'btn-success' }}" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
                                 </td>
                             </tr>
                         @endforeach
