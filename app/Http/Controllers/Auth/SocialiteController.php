@@ -38,18 +38,17 @@ class SocialiteController extends Controller
                     'password' => bcrypt(Str::random(16)), // random dummy password
                 ]
             );
+            
+            if (method_exists($user, 'assignRole') && $user->getRoleNames()->isEmpty()) {
+                $user->assignRole('patient');
+            }
             session()->put('user', [
                 'id'  => $user->id,
                 'name'  => $user->name,
                 'email' => $user->email,
-                'roles' => $user->getRoleNames(), // Spatie roles
+                'roles' => $user->getRoleNames()->first(), // Spatie roles
             ]);
 
-
-            // ✅ Assign default role if none
-            if (method_exists($user, 'assignRole') && !$user->hasAnyRole()) {
-                $user->assignRole('patient');
-            }
 
             // ✅ Login the user
             Auth::login($user);

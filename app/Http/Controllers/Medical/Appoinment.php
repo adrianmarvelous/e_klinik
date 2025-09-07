@@ -23,8 +23,10 @@ class Appoinment extends Controller
         $users = MedicalHistory::with([
                         'patient.user',   // nested relation
                         'appointments'    // appointments linked to this medical history
-                    ])->get();
+                    ])->orderBy('created_at', 'desc')
+                    ->get();
         
+                    // dd($users);
         return view('appoinment.index',compact('users'));
     }
     public function schedule($patient_id,$medical_history_id)
@@ -38,8 +40,17 @@ class Appoinment extends Controller
                         ]);
                     }])
                     ->get();
-                    
-        return view('appoinment.schedule',compact('doctors','patient_id','medical_history_id'));
+        $appointment = Appoinments::where('medical_history_id',$medical_history_id)
+                                    ->where('patient_id',$patient_id)
+                                    ->first();
+        $appointment_id = $appointment->id;
+        $data = compact('doctors', 'patient_id', 'medical_history_id');
+
+        if ($appointment) {
+            $data['appointment_id'] = $appointment_id;
+        }
+
+        return view('appoinment.schedule', $data);
     }
 
     /**
@@ -52,11 +63,12 @@ class Appoinment extends Controller
     public function save_schedule(Request $request)
     {
         $validated = $request->validate([
-            'patient_id'  => ['required', 'numeric', new SafeInput],
-            'doctor_id'   => ['required', 'numeric', new SafeInput],
-            'medical_history_id'   => ['required', 'numeric', new SafeInput],
-            'date'        => ['required', 'date', new SafeInput],
-            'time'        => ['required', 'date_format:H:i', new SafeInput], // e.g. 14:30
+            'appointment_id'      => ['nullable', 'numeric', new SafeInput],
+            'patient_id'          => ['required', 'numeric', new SafeInput],
+            'doctor_id'           => ['required', 'numeric', new SafeInput],
+            'medical_history_id'  => ['required', 'numeric', new SafeInput],
+            'date'                => ['required', 'date', new SafeInput],
+            'time'                => ['required', 'date_format:H:i', new SafeInput], // e.g. 14:30
         ]);
 
         DB::beginTransaction();
@@ -65,11 +77,18 @@ class Appoinment extends Controller
             // Merge date + time into datetime
             $dateTime = $validated['date'] . ' ' . $validated['time'];
 
-            $appointment = new Appoinments();
+            if (!empty($validated['appointment_id'])) {
+                // ✅ Update existing appointment
+                $appointment = Appoinments::findOrFail($validated['appointment_id']);
+            } else {
+                // ✅ Create new appointment
+                $appointment = new Appoinments();
+            }
+
             $appointment->medical_history_id = $validated['medical_history_id'];
             $appointment->patient_id = $validated['patient_id'];
             $appointment->doctor_id  = $validated['doctor_id'];
-            $appointment->datetime  = $dateTime;
+            $appointment->datetime   = $dateTime;
             $appointment->save();
 
             DB::commit();
@@ -78,8 +97,7 @@ class Appoinment extends Controller
                 ->route('appoinment.index')
                 ->with('success', 'Jadwal berhasil disimpan!');
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // biarkan Laravel handle redirect back dengan error bag
-            throw $e;
+            throw $e; // biarkan Laravel handle redirect back dengan error bag
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -88,38 +106,37 @@ class Appoinment extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'keluhan'  => ['required', 'string', 'max:255', new SafeInput],
+            'keluhan' => ['required', 'string', 'max:1000000', new SafeInput],
         ]);
+
         try {
             DB::transaction(function () use ($validated) {
                 $patient = Patient::where('user_id', session('user.id'))->firstOrFail();
 
-                $medicalHistory = MedicalHistory::updateOrCreate(
-                    [
-                        'patient_id' => $patient->id, // valid FK
-                        'type'       => 'keluhan',
-                    ],
-                    [
-                        'description' => $validated['keluhan'],
-                    ]
-                );
-
+                MedicalHistory::create([
+                    'patient_id'  => $patient->id,
+                    'type'        => 'keluhan',
+                    'description' => $validated['keluhan'],
+                ]);
             });
 
             return redirect()
                 ->route('dashboard')
-                ->with('success', 'Medical Report data updated successfully!');
+                ->with('success', 'Medical Report data created successfully!');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Failed to update patient: ' . $e->getMessage());
+            return back()->with('error', 'Failed to create patient medical report: ' . $e->getMessage());
         }
     }
+
+
 
     /**
      * Display the specified resource.

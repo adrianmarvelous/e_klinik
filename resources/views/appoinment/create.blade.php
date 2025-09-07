@@ -11,7 +11,15 @@
                         <label for="">Keluhan</label>
                     </div>
                     <div class="col-lg-10">
-                        <textarea id="summernote" name="keluhan"></textarea>
+                        <textarea id="summernote" name="keluhan">
+                            {{ old('keluhan', $medicalHistory->description ?? "Keluhan Utama : <br>
+                        Keluhan Tambahan : <br>
+                        Lama Sakit : <br>
+                        Merokok : <br>
+                        Konsumsi Alkohol : <br>
+                        Kurang Sayur Buah : <br>") }}
+                        </textarea>
+
                     </div>
                 </div>
                 <div class="d-flex justify-content-end mt-3">

@@ -496,8 +496,7 @@
                     </div>
               
                     @if (Route::current()->getName() == 'dashboard')
-                    
-                        @if (session('user.role') == 'patient')
+                        @if (session('user.roles') == 'patient')
                             <div class="row">
                                 <div class="col-sm-6 col-md-3">
                                     <a href="{{ route('appoinment.create') }}">

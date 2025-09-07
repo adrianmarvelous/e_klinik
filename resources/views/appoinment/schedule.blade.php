@@ -120,6 +120,9 @@
                                             <div class="col-lg-4 col-md-6 mb-3">
                                                 <form action="{{ route('appoinment.save_schedule') }}" method="POST">
                                                     @csrf
+                                                    @isset($appointment_id)
+                                                    <input type="hidden" name="appointment_id" value="{{ $appointment_id }}">
+                                                    @endisset
                                                     <input type="hidden" name="patient_id" value="{{ $patient_id }}">
                                                     <input type="hidden" name="doctor_id" value="{{ optional($doctor->doctor)->id }}">
                                                     <input type="hidden" name="medical_history_id" value="{{ $medical_history_id }}">

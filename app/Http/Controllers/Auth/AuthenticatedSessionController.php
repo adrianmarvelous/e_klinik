@@ -31,18 +31,18 @@ class AuthenticatedSessionController extends Controller
         // Get the authenticated user
         $user = Auth::user();
 
-        // Store user info + role into session
-        session()->put('user', [
-            'id'  => $user->id,
-            'name'  => $user->name,
-            'email' => $user->email,
-            'roles' => $user->getRoleNames(), // Spatie roles
-        ]);
         
         // Assign default role ONLY if user truly has no role
         if (method_exists($user, 'assignRole') && $user->roles->isEmpty()) {
             $user->assignRole('patient');
         }
+        // Store user info + role into session
+        session()->put('user', [
+            'id'  => $user->id,
+            'name'  => $user->name,
+            'email' => $user->email,
+            'roles' => $user->getRoleNames()->first(), // Spatie roles
+        ]);
 
 
         // ✅ Login the user
