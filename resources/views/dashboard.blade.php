@@ -519,7 +519,7 @@
                                         </div>
                                     </a>
                                 </div>
-                                <div class="col-sm-6 col-md-3">
+                                {{-- <div class="col-sm-6 col-md-3">
                                     <div class="card card-stats card-info card-round">
                                         <div class="card-body">
                                             <div class="row">
@@ -531,13 +531,12 @@
                                             <div class="col-7 col-stats">
                                                 <div class="numbers">
                                                 <h3 class="card-title">Medial History</h3>
-                                                {{-- <h4 class="card-title">1,294</h4> --}}
                                                 </div>
                                             </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         @endif
                     @endif
