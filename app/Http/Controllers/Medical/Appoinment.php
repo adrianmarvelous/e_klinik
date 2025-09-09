@@ -43,7 +43,9 @@ class Appoinment extends Controller
         $appointment = Appoinments::where('medical_history_id',$medical_history_id)
                                     ->where('patient_id',$patient_id)
                                     ->first();
-        $appointment_id = $appointment->id;
+        if($appointment){
+            $appointment_id = $appointment->id;
+        }
         $data = compact('doctors', 'patient_id', 'medical_history_id');
 
         if ($appointment) {
