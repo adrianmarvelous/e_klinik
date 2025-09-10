@@ -35,6 +35,7 @@ class AuthenticatedSessionController extends Controller
         // Assign default role ONLY if user truly has no role
         if (method_exists($user, 'assignRole') && $user->roles->isEmpty()) {
             $user->assignRole('patient');
+            $user->refresh(); // reload from DB
         }
         // Store user info + role into session
         session()->put('user', [
