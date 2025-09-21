@@ -41,6 +41,7 @@ class SocialiteController extends Controller
             
             if (method_exists($user, 'assignRole') && $user->getRoleNames()->isEmpty()) {
                 $user->assignRole('patient');
+                $user->refresh(); // reload from DB
             }
             session()->put('user', [
                 'id'  => $user->id,
