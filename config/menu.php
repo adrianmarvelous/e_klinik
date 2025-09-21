@@ -5,10 +5,11 @@
             ['name' => 'Appoinment', 'route' => 'appoinment.index','icon' => 'calendar'],
         ],
         'doctor' => [
-            ['name' => 'Appointments', 'route' => 'users.index','icon' => 'calendar'],
+            ['name' => 'Appointments', 'route' => 'appoinment.index','icon' => 'calendar'],
         ],
         'patient' => [
-            ['name' => 'Book Appointment', 'route' => 'appoinment.index','icon' => 'users'],
+            ['name' => 'Book Appointment', 'route' => 'appoinment.create','icon' => 'hospital'],
+            ['name' => 'Medical History', 'route' => 'appoinment.index','icon' => 'history'],
         ],
     ];
 

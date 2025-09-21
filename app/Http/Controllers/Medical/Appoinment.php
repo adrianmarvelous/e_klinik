@@ -20,11 +20,35 @@ class Appoinment extends Controller
      */
     public function index()
     {
-        $users = MedicalHistory::with([
-                        'patient.user',   // nested relation
-                        'appointments'    // appointments linked to this medical history
-                    ])->orderBy('created_at', 'desc')
-                    ->get();
+        if(session('user.roles') == 'admin'){
+            $users = MedicalHistory::with([
+                            'patient.user',   // nested relation
+                            'appointments'    // appointments linked to this medical history
+                        ])->orderBy('created_at', 'desc')
+                        ->get();
+        }elseif(session('user.roles') == 'patient'){
+            $users = MedicalHistory::with([
+                'patient.user',   // nested relation
+                'appointments'
+            ])
+            ->whereHas('patient.user', function ($query) {
+                $query->where('id', session('user.id'));
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+        }elseif(session('user.roles') == 'doctor'){
+            echo $doctorId = session('user.id');
+            $users = MedicalHistory::with([
+                'patient.user',     // nested relation
+                'appointments.doctor.user' // eager load doctor inside appointments
+            ])
+            ->whereHas('appointments.doctor.user', function ($query) use ($doctorId) {
+                $query->where('id', $doctorId);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        }
         
                     // dd($users);
         return view('appoinment.index',compact('users'));
@@ -32,7 +56,7 @@ class Appoinment extends Controller
     public function schedule($patient_id,$medical_history_id)
     {
         $doctors = User::role('doctor')
-                    ->with(['doctor.appointments' => function ($q) use ($patient_id) {
+                    ->with(['doctor.appointments.doctor' => function ($q) use ($patient_id) {
                         $q->where('patient_id', $patient_id)
                         ->whereBetween('datetime', [
                             Carbon::today(),
@@ -43,7 +67,9 @@ class Appoinment extends Controller
         $appointment = Appoinments::where('medical_history_id',$medical_history_id)
                                     ->where('patient_id',$patient_id)
                                     ->first();
-        $appointment_id = $appointment->id;
+        if($appointment){
+            $appointment_id = $appointment->id;
+        }
         $data = compact('doctors', 'patient_id', 'medical_history_id');
 
         if ($appointment) {
@@ -52,6 +78,56 @@ class Appoinment extends Controller
 
         return view('appoinment.schedule', $data);
     }
+    public function sendBookingToPatient($patient_id, $medical_history_id)
+    {
+        $patient = Patient::with([
+            'user',
+            'medicalHistories' => function ($query) use ($medical_history_id) {
+                $query->where('id', $medical_history_id)
+                    ->with('appointments.doctor.user');
+            }
+        ])
+        ->where('id', $patient_id)
+        ->firstOrFail();
+
+        $history = $patient->medicalHistories->first();
+
+        $data_pasien = [
+            'name'          => $patient->user->name,
+            'alamat'        => $patient->address,
+            'tanggal_lahir' => date('d-M-Y', strtotime($patient->date_of_birth)),
+            'usia'          => Carbon::parse($patient->date_of_birth)->age,
+            'email'         => $patient->user->email,
+            'keluhan'       => $history->description,
+            'jadwal_dokter' => Carbon::parse($history->appointments->datetime)
+                                    ->locale('id')
+                                    ->translatedFormat('d F Y H:i'),
+            'doctor'        => $history->appointments->doctor->user->name,
+        ];
+
+        // Build pesan
+        $message = "Halo Selamat Siang,\n\n"
+            . "Kami dari Klinik .... menginformasikan.\n\n"
+            . "- Nama Pasien : {$data_pasien['name']}\n"
+            . "- Alamat      : {$data_pasien['alamat']}\n"
+            . "- Tanggal Lahir : {$data_pasien['tanggal_lahir']}\n"
+            . "- Usia        : {$data_pasien['usia']}\n"
+            . "- E-mail      : {$data_pasien['email']}\n"
+            . "- Keluhan     : {$data_pasien['keluhan']}\n"
+            . "- Dokter      : {$data_pasien['doctor']}\n"
+            . "- Jadwal      : {$data_pasien['jadwal_dokter']}\n"
+            . "Terima kasih.";
+
+        $encodedMessage = urlencode($message);
+        $phone = preg_replace('/[^0-9]/', '', $patient->phone); // sanitize number
+
+        $waLink = "https://wa.me/{$phone}?text={$encodedMessage}";
+
+        // 🔥 Redirect straight to WhatsApp
+        return redirect()->away($waLink);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

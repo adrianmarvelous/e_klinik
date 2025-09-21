@@ -3,7 +3,15 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <h2>List Pasien Masuk</h2>
+            <h2>
+                @if (session('user.roles') == 'admin')
+                    List Pasien Masuk
+                @elseif (session('user.roles') == 'patient')
+                    List Keluhan
+                @elseif (session('user.roles') == 'doctor')
+                    List Pasien
+                @endif
+            </h2>
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="basic-datatables">
                     <thead>
@@ -27,9 +35,16 @@
                                 <td style="text-transform: capitalize">{{ optional($item->appointments)->status }}</td>
                                 <td>{{ optional($item->appointments)->datetime ? \Carbon\Carbon::parse($item->appointments->datetime)->format('d-M-Y H:i') : '-' }}</td>
                                 <td>
-                                    <a class="btn {{ $item->appointments === null ? 'btn-primary' : 'btn-success' }}" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
-                                    @if ($item->appointments !== null)
-                                        <a class="btn btn-primary" href=""data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Check Up"><i class="fa fa-list"></i></a>
+                                    @if (session('user.roles') == 'admin')
+                                        <a class="btn {{ $item->appointments === null ? 'btn-primary' : 'btn-success' }} m-1" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
+                                        @if ($item->appointments !== null)
+                                            <a class="btn btn-primary m-1" href=""data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Check Up"><i class="fa fa-list"></i></a>
+                                            <a class="btn btn-success m-1" href="{{ route('appoinment.sendBookingToPatient',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Whatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                                        @endif
+                                    @elseif (session('user.roles') == 'patient')
+                                        <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
+                                    @elseif (session('user.roles') == 'doctor')
+                                        <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
                                     @endif
                                 </td>
                             </tr>

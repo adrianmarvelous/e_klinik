@@ -88,7 +88,7 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="index.html" class="logo">
-                        <img src="assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand"
+                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
                             height="20" />
                     </a>
                     <div class="nav-toggle">
@@ -153,7 +153,7 @@
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
                         <a href="index.html" class="logo">
-                            <img src="{{ asset('templetes/kaiadmi-lite/assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
+                            <img src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
                                 height="20" />
                         </a>
                         <div class="nav-toggle">
@@ -218,7 +218,7 @@
                                             <div class="notif-center">
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('templetes/kaidamin-lite/assets/img/jm_denis.jpg') }}" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/jm_denis.jpg') }}" alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Jimmy Denis</span>
@@ -238,7 +238,7 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="assets/img/mlane.jpg" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/mlane.jpg') }}" alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Jhon Doe</span>
@@ -250,7 +250,7 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="assets/img/talha.jpg" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/talha.jpg') }}" alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Talha</span>
@@ -305,7 +305,7 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="assets/img/profile2.jpg" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile2.jpg') }}" alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="block">
@@ -644,10 +644,10 @@
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/bootstrap.min.js') }}"></script>
     
-    {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}">
+    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}">
     </script>
 
-    <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/chart.js/chart.min.js') }}"></script>
+    {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/chart.js/chart.min.js') }}"></script>
 
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}">
     </script>

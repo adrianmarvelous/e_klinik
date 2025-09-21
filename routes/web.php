@@ -22,14 +22,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // ✅ Resource route untuk Patient
+    //
     Route::resource('patient', PatientController::class);
     Route::resource('doctor', DoctorController::class);
     Route::get('/appoinment/schedule/{patient_id}/{medical_history_id}', [Appoinment::class, 'schedule'])->name('appoinment.schedule');
+    Route::get('/appoinment/sendBookingToPatient/{patient_id}/{medical_history_id}', [Appoinment::class, 'sendBookingToPatient'])->name('appoinment.sendBookingToPatient');
     Route::post('/appoinment/save_schedule', [Appoinment::class, 'save_schedule'])->name('appoinment.save_schedule');
     Route::resource('appoinment', Appoinment::class);
-    Route::resource('users', UserController::class);
-    Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+
+    // ✅ Admin-only routes
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('users', UserController::class);
+        Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+    });
 });
 
 Route::middleware('auth')->group(function () {
