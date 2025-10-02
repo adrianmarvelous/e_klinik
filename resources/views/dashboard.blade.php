@@ -47,38 +47,38 @@
         dd(session()->all());
     @endphp --}}
     {{-- ✅ Success --}}
-    @if(session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: "{{ session('success') }}",
-            confirmButtonText: 'OK' // tulisan tombol
-        });
-    </script>
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: "{{ session('success') }}",
+                confirmButtonText: 'OK' // tulisan tombol
+            });
+        </script>
     @endif
 
 
     {{-- ❌ Error dari session (catch di controller) --}}
-    @if(session('error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Gagal!',
-            text: "{{ session('error') }}",
-        });
-    </script>
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                text: "{{ session('error') }}",
+            });
+        </script>
     @endif
 
     {{-- ⚠️ Error dari Laravel validation --}}
     @if ($errors->any())
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Validasi Gagal!',
-            html: `{!! implode('<br>', $errors->all()) !!}`, // tampilkan semua error dalam 1 popup
-        });
-    </script>
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal!',
+                html: `{!! implode('<br>', $errors->all()) !!}`, // tampilkan semua error dalam 1 popup
+            });
+        </script>
     @endif
 
     <div class="wrapper">
@@ -88,8 +88,8 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="index.html" class="logo">
-                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
-                            height="20" />
+                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg') }}"
+                            alt="navbar brand" class="navbar-brand" height="20" />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -130,7 +130,7 @@
                             </span>
                             <h4 class="text-section">Manu</h4>
                         </li>
-                        @foreach(config('menu.'.auth()->user()->getRoleNames()->first()) as $menu)
+                        @foreach (config('menu.' . auth()->user()->getRoleNames()->first()) as $menu)
                             {{-- <li><a href="{{ route($menu['route']) }}">{{ $menu['name'] }}</a></li> --}}
                             <li class="nav-item">
                                 <a href="{{ route($menu['route']) }}">
@@ -153,8 +153,8 @@
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
                         <a href="index.html" class="logo">
-                            <img src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand"
-                                height="20" />
+                            <img src="{{ asset('templetes/kaiadmin-lite/assets/img/kaiadmin/logo_light.svg') }}"
+                                alt="navbar brand" class="navbar-brand" height="20" />
                         </a>
                         <div class="nav-toggle">
                             <button class="btn btn-toggle toggle-sidebar">
@@ -218,7 +218,8 @@
                                             <div class="notif-center">
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/jm_denis.jpg') }}" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/jm_denis.jpg') }}"
+                                                            alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Jimmy Denis</span>
@@ -228,7 +229,8 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/chadengle.jpg') }} " alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/chadengle.jpg') }} "
+                                                            alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Chad</span>
@@ -238,7 +240,8 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/mlane.jpg') }}" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/mlane.jpg') }}"
+                                                            alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Jhon Doe</span>
@@ -250,7 +253,8 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/talha.jpg') }}" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/talha.jpg') }}"
+                                                            alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="subject">Talha</span>
@@ -305,7 +309,8 @@
                                                 </a>
                                                 <a href="#">
                                                     <div class="notif-img">
-                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile2.jpg') }}" alt="Img Profile" />
+                                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile2.jpg') }}"
+                                                            alt="Img Profile" />
                                                     </div>
                                                     <div class="notif-content">
                                                         <span class="block">
@@ -403,8 +408,8 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}" alt="..."
-                                            class="avatar-img rounded-circle" />
+                                        <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}"
+                                            alt="..." class="avatar-img rounded-circle" />
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
@@ -416,8 +421,8 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}" alt="image profile"
-                                                        class="avatar-img rounded" />
+                                                    <img src="{{ asset('templetes/kaiadmin-lite/assets/img/profile.jpg') }}"
+                                                        alt="image profile" class="avatar-img rounded" />
                                                 </div>
                                                 <div class="u-text">
                                                     <h4>{{ session('user.name') }}</h4>
@@ -430,17 +435,20 @@
                                         <li>
                                             <div class="dropdown-divider"></div>
                                             @if (session('user.role') == 'patient')
-                                                <a class="dropdown-item" href="{{ route('patient.show',['patient' => session('user.id')]) }}">My Profile</a>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('patient.show', ['patient' => session('user.id')]) }}">My
+                                                    Profile</a>
                                                 <div class="dropdown-divider"></div>
                                             @endif
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                 Logout
                                             </a>
 
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                class="d-none">
                                                 @csrf
                                             </form>
 
@@ -469,7 +477,7 @@
                                 </a>
                             </li>
 
-                            @foreach($segments as $index => $segment)
+                            @foreach ($segments as $index => $segment)
                                 {{-- separator --}}
                                 <li class="separator">
                                     <i class="icon-arrow-right"></i>
@@ -484,7 +492,7 @@
                                         $label = is_numeric($segment) ? 'Show' : ucfirst($segment);
                                     @endphp
 
-                                    @if(!$loop->last)
+                                    @if (!$loop->last)
                                         <a href="{{ $url }}">{{ $label }}</a>
                                     @else
                                         <span>{{ $label }}</span>
@@ -494,9 +502,101 @@
                         </ul>
 
                     </div>
-              
+
                     @if (Route::current()->getName() == 'dashboard')
                         @if (session('user.roles') == 'patient')
+                            <!-- TimeLine -->
+                            <h3 class="fw-bold mb-3">Timeline</h3>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul class="timeline">
+                                        {{-- <li>
+                                            <div class="timeline-badge"><i class="far fa-paper-plane"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Mussum ipsum cacilds</h4>
+                                                    <p>
+                                                        <small class="text-muted"><i class="far fa-paper-plane"></i>
+                                                            11 hours ago via Twitter</small>
+                                                    </p>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>
+                                                        Far far away, behind the word mountains, far from the countries
+                                                        Vokalia
+                                                        and Consonantia, there live the blind texts.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li> --}}
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge success"><i class="fas fa-user"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Pasien</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>
+                                                        Pasien mengisi login dan mengisi keluhan pada aplikasi/website.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge warning"><i class="fas fa-cog"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Admin</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>
+                                                        Admin menjadwalkan waktu konsultasi dan menentukan dokter yang sesuai dengan keluhan pasien.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge warning"><i class="fas fa-cog"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Admin</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>
+                                                        Jadwal dikirimkan ke pasien melalui WhatsApp.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="timeline-inverted">
+                                            <div class="timeline-badge success"><i class="fas fa-user"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Pasien</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>
+                                                        Pasien hadir di klinik sakit sesuai jadwal yang telah ditentukan. lalu pasien melakukan registrasi kedatangan.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="timeline-badge info"><i class="fas fa-plus-square"></i></div>
+                                            <div class="timeline-panel">
+                                                <div class="timeline-heading">
+                                                    <h4 class="timeline-title">Dokter</h4>
+                                                </div>
+                                                <div class="timeline-body">
+                                                    <p>
+                                                        Dokter Melakukan Analisa terhadap Pasien.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-sm-6 col-md-3">
                                     <a href="{{ route('appoinment.create') }}">
@@ -505,13 +605,13 @@
                                                 <div class="row">
                                                     <div class="col-5">
                                                         <div class="icon-big text-center">
-                                                        <i class="fas fa-calendar-alt"></i>
+                                                            <i class="fas fa-calendar-alt"></i>
                                                         </div>
                                                     </div>
                                                     <div class="col-7 col-stats">
                                                         <div class="numbers">
-                                                        <h3 class="card-title">Book Appointment</h3>
-                                                        {{-- <h4 class="card-title">1,294</h4> --}}
+                                                            <h3 class="card-title">Book Appointment</h3>
+                                                            {{-- <h4 class="card-title">1,294</h4> --}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -540,6 +640,7 @@
                             </div>
                         @endif
                     @endif
+
                     @yield('content')
                 </div>
             </div>
@@ -642,7 +743,7 @@
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/core/bootstrap.min.js') }}"></script>
-    
+
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}">
     </script>
 
@@ -661,10 +762,9 @@
 
     <!-- Datatables -->
     <script src="{{ asset('templetes/kaiadmin-lite/assets/js/plugin/datatables/datatables.min.js') }}"></script>
-	<script >
-		$(document).ready(function() {
-			$('#basic-datatables').DataTable({
-			});
+    <script>
+        $(document).ready(function() {
+            $('#basic-datatables').DataTable({});
         })
     </script>
 
@@ -677,17 +777,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
     <script>
-      $(function () {
-        $('#summernote').summernote({
-          height: 200,
-          toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['table']],
-            ['view', ['codeview']]
-          ]
+        $(function() {
+            $('#summernote').summernote({
+                height: 200,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['table']],
+                    ['view', ['codeview']]
+                ]
+            });
         });
-      });
     </script>
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/setting-demo.js') }}"></script>
