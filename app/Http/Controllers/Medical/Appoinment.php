@@ -20,54 +20,53 @@ class Appoinment extends Controller
      */
     public function index()
     {
-        if(session('user.roles') == 'admin'){
+        if (session('user.roles') == 'admin') {
             $users = MedicalHistory::with([
-                            'patient.user',   // nested relation
-                            'appointments'    // appointments linked to this medical history
-                        ])->orderBy('created_at', 'desc')
-                        ->get();
-        }elseif(session('user.roles') == 'patient'){
+                'patient.user',   // nested relation
+                'appointments.doctor.user'    // appointments linked to this medical history
+            ])->orderBy('created_at', 'desc')
+                ->get();
+        } elseif (session('user.roles') == 'patient') {
             $users = MedicalHistory::with([
                 'patient.user',   // nested relation
                 'appointments'
             ])
-            ->whereHas('patient.user', function ($query) {
-                $query->where('id', session('user.id'));
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
-        }elseif(session('user.roles') == 'doctor'){
-            echo $doctorId = session('user.id');
+                ->whereHas('patient.user', function ($query) {
+                    $query->where('id', session('user.id'));
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } elseif (session('user.roles') == 'doctor') {
+            $doctorId = session('user.id');
             $users = MedicalHistory::with([
                 'patient.user',     // nested relation
                 'appointments.doctor.user' // eager load doctor inside appointments
             ])
-            ->whereHas('appointments.doctor.user', function ($query) use ($doctorId) {
-                $query->where('id', $doctorId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
-
+                ->whereHas('appointments.doctor.user', function ($query) use ($doctorId) {
+                    $query->where('id', $doctorId);
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
-        
-                    // dd($users);
-        return view('appoinment.index',compact('users'));
+
+        // dd($users);
+        return view('appoinment.index', compact('users'));
     }
-    public function schedule($patient_id,$medical_history_id)
+    public function schedule($patient_id, $medical_history_id)
     {
         $doctors = User::role('doctor')
-                    ->with(['doctor.appointments.doctor' => function ($q) use ($patient_id) {
-                        $q->where('patient_id', $patient_id)
-                        ->whereBetween('datetime', [
-                            Carbon::today(),
-                            Carbon::today()->addDays(7)->endOfDay()
-                        ]);
-                    }])
-                    ->get();
-        $appointment = Appoinments::where('medical_history_id',$medical_history_id)
-                                    ->where('patient_id',$patient_id)
-                                    ->first();
-        if($appointment){
+            ->with(['doctor.appointments' => function ($q) use ($patient_id) {
+                $q->where('patient_id', $patient_id)
+                    ->whereBetween('datetime', [
+                        Carbon::today(),
+                        Carbon::today()->addDays(7)->endOfDay()
+                    ]);
+            }])
+            ->get();
+        $appointment = Appoinments::where('medical_history_id', $medical_history_id)
+            ->where('patient_id', $patient_id)
+            ->first();
+        if ($appointment) {
             $appointment_id = $appointment->id;
         }
         $data = compact('doctors', 'patient_id', 'medical_history_id');
@@ -87,8 +86,8 @@ class Appoinment extends Controller
                     ->with('appointments.doctor.user');
             }
         ])
-        ->where('id', $patient_id)
-        ->firstOrFail();
+            ->where('id', $patient_id)
+            ->firstOrFail();
 
         $history = $patient->medicalHistories->first();
 
@@ -100,8 +99,8 @@ class Appoinment extends Controller
             'email'         => $patient->user->email,
             'keluhan'       => $history->description,
             'jadwal_dokter' => Carbon::parse($history->appointments->datetime)
-                                    ->locale('id')
-                                    ->translatedFormat('d F Y H:i'),
+                ->locale('id')
+                ->translatedFormat('d F Y H:i'),
             'doctor'        => $history->appointments->doctor->user->name,
         ];
 
@@ -122,6 +121,60 @@ class Appoinment extends Controller
         $phone = preg_replace('/[^0-9]/', '', $patient->phone); // sanitize number
 
         $waLink = "https://wa.me/{$phone}?text={$encodedMessage}";
+        
+        $update = MedicalHistory::where('id', $medical_history_id)
+            ->update(['wa_patient' => 1]);
+
+        // 🔥 Redirect straight to WhatsApp
+        return redirect()->away($waLink);
+    }
+    public function sendBookingToDoctor($patient_id, $medical_history_id)
+    {
+        $patient = Patient::with([
+            'user',
+            'medicalHistories' => function ($query) use ($medical_history_id) {
+                $query->where('id', $medical_history_id)
+                    ->with('appointments.doctor.user.doctor');
+            }
+        ])
+            ->where('id', $patient_id)
+            ->firstOrFail();
+
+        $history = $patient->medicalHistories->first();
+
+        $data_pasien = [
+            'name'          => $patient->user->name,
+            'alamat'        => $patient->address,
+            'tanggal_lahir' => date('d-M-Y', strtotime($patient->date_of_birth)),
+            'usia'          => Carbon::parse($patient->date_of_birth)->age,
+            'email'         => $patient->user->email,
+            'keluhan'       => $history->description,
+            'jadwal_dokter' => Carbon::parse($history->appointments->datetime)
+                ->locale('id')
+                ->translatedFormat('d F Y H:i'),
+            'doctor'        => $history->appointments->doctor->user->name,
+        ];
+        
+        // Build pesan
+        $message = "Halo Selamat Siang,\n\n"
+            . "Kami dari Klinik .... menginformasikan.\n\n"
+            . "- Nama Pasien : {$data_pasien['name']}\n"
+            . "- Alamat      : {$data_pasien['alamat']}\n"
+            . "- Tanggal Lahir : {$data_pasien['tanggal_lahir']}\n"
+            . "- Usia        : {$data_pasien['usia']}\n"
+            . "- E-mail      : {$data_pasien['email']}\n"
+            . "- Keluhan     : {$data_pasien['keluhan']}\n"
+            . "- Dokter      : {$data_pasien['doctor']}\n"
+            . "- Jadwal      : {$data_pasien['jadwal_dokter']}\n"
+            . "Terima kasih.";
+
+        $encodedMessage = urlencode($message);
+        $phone = preg_replace('/[^0-9]/', '', $history->appointments->doctor->user->doctor->phone); // sanitize number
+
+        $waLink = "https://wa.me/{$phone}?text={$encodedMessage}";
+
+        $update = MedicalHistory::where('id', $medical_history_id)
+            ->update(['wa_doctor' => 1]);
 
         // 🔥 Redirect straight to WhatsApp
         return redirect()->away($waLink);
@@ -186,10 +239,16 @@ class Appoinment extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'keluhan' => ['required', 'string', 'max:1000000', new SafeInput],
+            'main_complaint'         => ['nullable', 'string', 'max:1000', new SafeInput],
+            'additional_complaint'   => ['nullable', 'string', 'max:1000', new SafeInput],
+            'illness_duration'       => ['nullable', 'string', 'max:255', new SafeInput],
+            'smoking'                => ['nullable', 'string', 'max:255', new SafeInput],
+            'alcohol_consumption'    => ['nullable', 'string', 'max:255', new SafeInput],
+            'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
         ]);
 
         try {
@@ -197,21 +256,24 @@ class Appoinment extends Controller
                 $patient = Patient::where('user_id', session('user.id'))->firstOrFail();
 
                 MedicalHistory::create([
-                    'patient_id'  => $patient->id,
-                    'type'        => 'keluhan',
-                    'description' => $validated['keluhan'],
+                    'patient_id'             => $patient->id,
+                    'type'                   => 'keluhan',
+                    'main_complaint'         => $validated['main_complaint'] ?? null,
+                    'additional_complaint'   => $validated['additional_complaint'] ?? null,
+                    'illness_duration'       => $validated['illness_duration'] ?? null,
+                    'smoking'                => $validated['smoking'] ?? null,
+                    'alcohol_consumption'    => $validated['alcohol_consumption'] ?? null,
+                    'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
                 ]);
             });
 
             return redirect()
                 ->route('dashboard')
-                ->with('success', 'Medical Report data created successfully!');
-
+                ->with('success', 'Medical report data created successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to create patient medical report: ' . $e->getMessage());
         }
     }
-
 
 
     /**

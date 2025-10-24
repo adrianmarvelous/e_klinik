@@ -22,30 +22,100 @@
                             <th>tanggal Daftar</th>
                             <th>Status</th>
                             <th>Tanggal Dokter</th>
-                            <th>Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($users as $no => $item)
                             <tr>
                                 <td>{{ $no+1 }}</td>
-                                <td>{{ $item->patient->user->name }}</td>
-                                <td>{!! $item->description !!}</td>
-                                <td>{{ date('d-M-Y H:i',strtotime($item->created_at)) }}</td>
-                                <td style="text-transform: capitalize">{{ optional($item->appointments)->status }}</td>
-                                <td>{{ optional($item->appointments)->datetime ? \Carbon\Carbon::parse($item->appointments->datetime)->format('d-M-Y H:i') : '-' }}</td>
+                                {{-- <td>{{ $item->patient->user->name }}</td> --}}
                                 <td>
-                                    @if (session('user.roles') == 'admin')
-                                        <a class="btn {{ $item->appointments === null ? 'btn-primary' : 'btn-success' }} m-1" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
-                                        @if ($item->appointments !== null)
-                                            <a class="btn btn-primary m-1" href=""data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Check Up"><i class="fa fa-list"></i></a>
-                                            <a class="btn btn-success m-1" href="{{ route('appoinment.sendBookingToPatient',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Whatsapp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                                    <table>
+                                        <tr>
+                                            <td>Dokter</td>
+                                            <td>:</td>
+                                            <td>{{ $item->appointments?->doctor?->user?->name ?? '-' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pasien</td>
+                                            <td>:</td>
+                                            <td>{{ $item->patient->user->name}}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td>Keluhan Utama</td>
+                                            <td style="width: 10px">:</td>
+                                            <td>{{ $item->main_complaint }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Keluhan Tambahan</td>
+                                            <td>:</td>
+                                            <td>{{ $item->additional_complaint }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lama Sakit</td>
+                                            <td>:</td>
+                                            <td>{{ $item->illness_duration }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Merokok</td>
+                                            <td>:</td>
+                                            <td>{{ $item->smooking == 1 ? 'Iya' : 'Tidak' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Konsumsi Alkohol</td>
+                                            <td>:</td>
+                                            <td>{{ $item->alcohol_consumption == 1 ? 'Iya' : 'Tidak' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Kurang Sayur Buah</td>
+                                            <td>:</td>
+                                            <td>{{ $item->low_fruit_veggie_intake == 1 ? 'Iya' : 'Tidak' }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td>{{ date('d-M-Y H:i',strtotime($item->created_at)) }}</td>
+                                <td style="text-transform: capitalize">
+                                    {{ optional($item->appointments)->status ?? 'Not Set' }}
+                                </td>
+                                <td>{{ optional($item->appointments)->datetime ? \Carbon\Carbon::parse($item->appointments->datetime)->format('d-M-Y H:i') : '-' }}</td>
+                                <td class="text-center">
+                                    <div class="flex flex-wrap" style="max-width: 150px; gap: 8px;">
+                                        @if (session('user.roles') == 'admin')
+                                            <a class="btn {{ $item->appointments === null ? 'btn-primary' : 'btn-success' }} m-1" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
+                                            @if ($item->appointments !== null)
+                                                <a class="btn btn-primary m-1" href="{{ route('medical.show',['medical' => $item->id]) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Check Up"><i class="fa fa-list"></i></a>
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_patient == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Pasien' }}">
+                                                    <a class="btn {{ $item->wa_patient == 1 ? 'btn-danger' : 'btn-success' }} m-1"
+                                                    href="{{ $item->wa_patient == 1 ? '#' : route('appoinment.sendBookingToPatient',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
+                                                    target="_blank"
+                                                    onclick="{{ $item->wa_patient == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}"
+                                                    style="{{ $item->wa_patient == 1 ? 'opacity: 0.6; cursor: not-allowed;' : '' }}">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                    </a>
+                                                </span>
+
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_doctor == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Dokter' }}">
+                                                    <a class="btn {{ $item->wa_doctor == 1 ? 'btn-danger' : 'btn-primary' }} m-1"
+                                                    href="{{ $item->wa_doctor == 1 ? '#' : route('appoinment.sendBookingToDoctor',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
+                                                    target="_blank"
+                                                    onclick="{{ $item->wa_doctor == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}"
+                                                    style="{{ $item->wa_doctor == 1 ? 'opacity: 0.6; cursor: not-allowed;' : '' }}">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                    </a>
+                                                </span>
+
+                                            @endif
+                                        @elseif (session('user.roles') == 'patient')
+                                            <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
+                                        @elseif (session('user.roles') == 'doctor')
+                                            <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
                                         @endif
-                                    @elseif (session('user.roles') == 'patient')
-                                        <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
-                                    @elseif (session('user.roles') == 'doctor')
-                                        <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
-                                    @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

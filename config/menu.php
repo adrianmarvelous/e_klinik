@@ -3,6 +3,7 @@
         'admin' => [
             ['name' => 'Manage Users', 'route' => 'users.index','icon' => 'users'],
             ['name' => 'Appoinment', 'route' => 'appoinment.index','icon' => 'calendar'],
+            ['name' => 'Attendance', 'route' => 'attendance.index','icon' => 'clock'],
         ],
         'doctor' => [
             ['name' => 'Appointments', 'route' => 'appoinment.index','icon' => 'calendar'],

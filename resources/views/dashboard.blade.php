@@ -788,6 +788,17 @@
                 ]
             });
         });
+        $(function() {
+            $('#summernote1').summernote({
+                height: 200,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['table']],
+                    ['view', ['codeview']]
+                ]
+            });
+        });
     </script>
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     {{-- <script src="{{ asset('templetes/kaiadmin-lite/assets/js/setting-demo.js') }}"></script>

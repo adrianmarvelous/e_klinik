@@ -5,6 +5,7 @@ namespace App\Models\Medical;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Roles\Patient;
 use App\Models\Appoinment\Appoinments;
+use App\Models\Medical\MedicalRecord;
 
 class MedicalHistory extends Model
 {
@@ -13,6 +14,12 @@ class MedicalHistory extends Model
         'patient_id',
         'type',
         'description',
+        'main_complaint',
+        'additional_complaint',
+        'illness_duration',
+        'smoking',
+        'alcohol_consumption',
+        'low_fruit_veggie_intake',
     ];
     
     public function patient()
@@ -24,5 +31,10 @@ class MedicalHistory extends Model
     public function appointments()
     {
         return $this->hasOne(Appoinments::class, 'medical_history_id', 'id');
+    }
+    // ✅ One medical history can be linked to many appointments
+    public function medical_records()
+    {
+        return $this->hasOne(MedicalRecord::class);
     }
 }
