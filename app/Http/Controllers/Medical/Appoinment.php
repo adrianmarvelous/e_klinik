@@ -199,7 +199,6 @@ class Appoinment extends Controller
             'date'                => ['required', 'date', new SafeInput],
             'time'                => ['required', 'date_format:H:i', new SafeInput], // e.g. 14:30
         ]);
-
         DB::beginTransaction();
 
         try {

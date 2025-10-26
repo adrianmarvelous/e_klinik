@@ -67,6 +67,10 @@
         </svg>
         Login with Google
     </a>
+    <div class="d-flex justify-content-between mt-3">
+        <p >didn't have account?</p>
+        <a href="{{ route('register') }}" class="btn btn-dark">Register Here</a>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </x-guest-layout>

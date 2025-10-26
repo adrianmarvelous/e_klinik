@@ -47,11 +47,13 @@ class RegisteredUserController extends Controller
         Auth::login($user);
         // Store user info + role into session
         session()->put('user', [
+            'id'  => $user->id,
             'name'  => $user->name,
             'email' => $user->email,
             'roles' => $user->getRoleNames(), // Spatie roles
         ]);
 
-        return redirect(route('dashboard', absolute: false));
+        // return redirect(route('dashboard', absolute: false));
+        return redirect()->route($user->patient ? 'dashboard' : 'patient.create');
     }
 }
