@@ -12,6 +12,7 @@ use App\Models\Roles\Patient;
 use App\Models\Roles\Doctor;
 use App\Models\User;
 use App\Models\Appoinment\Appoinments;
+use App\Models\Medical\Polis;
 
 class Appoinment extends Controller
 {
@@ -187,7 +188,31 @@ class Appoinment extends Controller
      */
     public function create()
     {
-        return view('appoinment.create');
+        $user_id = session('user.id');
+        $patient_id = Patient::where('user_id',$user_id)->value('id');
+        $doctors = User::role('doctor')
+            ->with(['doctor.appointments' => function ($q) use ($patient_id) {
+                $q->where('patient_id', $patient_id)
+                    ->whereBetween('datetime', [
+                        Carbon::today(),
+                        Carbon::today()->addDays(7)->endOfDay()
+                    ]);
+            }])
+            ->get();
+        $polis = Polis::all();
+        // $appointment = Appoinments::where('medical_history_id', $medical_history_id)
+        //     ->where('patient_id', $patient_id)
+        //     ->first();
+        // if ($appointment) {
+        //     $appointment_id = $appointment->id;
+        // }
+        $data = compact('doctors', 'patient_id','polis');
+
+        // if ($appointment) {
+        //     $data['appointment_id'] = $appointment_id;
+        // }
+
+        return view('appoinment.create',$data);
     }
     public function save_schedule(Request $request)
     {
