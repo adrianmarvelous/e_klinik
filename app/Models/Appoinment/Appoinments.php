@@ -7,6 +7,7 @@ use App\Models\Medical\MedicalHistory;
 use App\Models\Roles\Doctor;
 use App\Models\Roles\Patient;
 use App\Models\User;
+use App\Models\Medical\Polis;
 
 class Appoinments extends Model
 {
@@ -15,7 +16,7 @@ class Appoinments extends Model
         'id',
         'medical_history_id',
         'patient_id',
-        'doctor_id',
+        'poli_id',
         'datetime',
     ];
     
@@ -26,9 +27,9 @@ class Appoinments extends Model
         return $this->belongsTo(MedicalHistory::class, 'medical_history_id', 'id');
     }
     // ✅ Each appointment belongs to one medical history
-    public function doctor()
+    public function polis()
     {
-        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+        return $this->belongsTo(Polis::class, 'polis_id', 'id');
     }
     public function patient()
     {
@@ -46,7 +47,7 @@ class Appoinments extends Model
     }
     public function scopeWithIdAppointment($query, $id)
     {
-        return $query->with(['patient.user', 'doctor.user','medicalHistory.medical_records'])
+        return $query->with(['patient.user', /*'doctor.user',*/'medicalHistory.medical_records'])
                      ->where('medical_history_id', $id);
     }
 

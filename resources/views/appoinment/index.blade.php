@@ -21,7 +21,7 @@
                             <th>Keluhan</th>
                             <th>tanggal Daftar</th>
                             <th>Status</th>
-                            <th>Tanggal Dokter</th>
+                            <th>Tanggal Datang</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -86,25 +86,23 @@
                                 <td class="text-center">
                                     <div class="flex flex-wrap" style="max-width: 150px; gap: 8px;">
                                         @if (session('user.roles') == 'admin')
-                                            <a class="btn {{ $item->appointments === null ? 'btn-primary' : 'btn-success' }} m-1" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a>
+                                            {{-- <a class="btn {{ $item->appointments === null ? 'btn-primary' : 'btn-success' }} m-1" href="{{ route('appoinment.schedule',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Pilih Jadwal Dokter"><i class="fas fa-calendar-alt"></i></a> --}}
                                             @if ($item->appointments !== null)
                                                 <a class="btn btn-primary m-1" href="{{ route('medical.show',['medical' => $item->id]) }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Check Up"><i class="fa fa-list"></i></a>
                                                 <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_patient == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Pasien' }}">
-                                                    <a class="btn {{ $item->wa_patient == 1 ? 'btn-danger' : 'btn-success' }} m-1"
-                                                    href="{{ $item->wa_patient == 1 ? '#' : route('appoinment.sendBookingToPatient',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
+                                                    <a class="btn btn-success m-1"
+                                                    href="{{ route('appoinment.sendBookingToPatient',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
                                                     target="_blank"
-                                                    onclick="{{ $item->wa_patient == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}"
-                                                    style="{{ $item->wa_patient == 1 ? 'opacity: 0.6; cursor: not-allowed;' : '' }}">
+                                                    onclick="{{ $item->wa_patient == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}">
                                                     <i class="fab fa-whatsapp"></i>
                                                     </a>
                                                 </span>
 
                                                 <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_doctor == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Dokter' }}">
-                                                    <a class="btn {{ $item->wa_doctor == 1 ? 'btn-danger' : 'btn-primary' }} m-1"
-                                                    href="{{ $item->wa_doctor == 1 ? '#' : route('appoinment.sendBookingToDoctor',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
+                                                    <a class="btn btn-primary m-1"
+                                                    href="{{route('appoinment.sendBookingToDoctor',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
                                                     target="_blank"
-                                                    onclick="{{ $item->wa_doctor == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}"
-                                                    style="{{ $item->wa_doctor == 1 ? 'opacity: 0.6; cursor: not-allowed;' : '' }}">
+                                                    onclick="{{ $item->wa_doctor == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}">
                                                     <i class="fab fa-whatsapp"></i>
                                                     </a>
                                                 </span>

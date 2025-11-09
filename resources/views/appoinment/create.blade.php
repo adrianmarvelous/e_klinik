@@ -20,7 +20,14 @@
     .custom-nav {
         position: relative;
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+    .custom-nav::-webkit-scrollbar {
+        display: none;
     }
 
     .hover-card {
@@ -50,25 +57,13 @@
     }
 
     @media (max-width: 768px) {
-        h2 {
-            font-size: 1.25rem;
-        }
-        .slot-card h4 {
-            font-size: 1rem;
-        }
+        h2 { font-size: 1.25rem; }
+        .slot-card h4 { font-size: 1rem; }
     }
-    .custom-nav {
-    position: relative;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none; /* hide scrollbar on Firefox */
-}
 
-.custom-nav::-webkit-scrollbar {
-    display: none; /* hide scrollbar on Chrome */
-}
-
+    .bg-success-gradient {
+        background: linear-gradient(45deg, #28a745, #85e085);
+    }
 </style>
 
 <div class="card">
@@ -125,7 +120,7 @@
             {{-- ================= PILIH JADWAL DOKTER ================= --}}
             <div class="card mt-4">
                 <div class="card-body">
-                    <h2>Pilih Jadwal Dokter</h2>
+                    <h2>Pilih Jadwal</h2>
 
                     <!-- Nav Tabs for Doctors -->
                     <ul class="nav nav-line nav-color-secondary custom-nav" id="doctorTab" role="tablist">
@@ -177,67 +172,76 @@
 
                                 <!-- Time Slots -->
                                 <div class="tab-content mt-3">
-                                    @for ($d = 0; $d <= 8; $d++)
+                                    @for ($d = 0; $d <= 5; $d++)
                                         @php
                                             $date = \Carbon\Carbon::now()->startOfDay()->addDays($d);
                                             $isSaturday = $date->isSaturday();
+                                            $isSunday = $date->isSunday();
                                             $maxSlots = $isSaturday ? 6 : 9;
                                         @endphp
 
                                         <div class="tab-pane fade {{ $d === 0 ? 'show active' : '' }}"
                                              id="date-{{ $doctor->id }}-{{ $d }}" role="tabpanel">
-                                            <h5>Jadwal untuk {{ $date->format('l, d M Y') }}</h5>
 
-                                            <div class="row">
-                                                @for ($i = 0; $i < $maxSlots; $i++)
-                                                    @php
-                                                        $slot = $date->copy()->setTime(8, 0)->addHours($i);
-                                                        $appointmentExists = optional($doctor->doctor)->appointments
-                                                            ? $doctor->doctor->appointments->contains(function ($app) use ($slot) {
+                                            @if ($isSunday)
+                                                <div class="alert alert-warning text-center">
+                                                    Klinik tutup pada hari Minggu.
+                                                </div>
+                                            @else
+                                                <h5>Jadwal untuk {{ $date->translatedFormat('l, d M Y') }}</h5>
+
+                                                <div class="row">
+                                                    @for ($i = 0; $i < $maxSlots; $i++)
+                                                        @php
+                                                            $slot = $date->copy()->setTime(8, 0)->addHours($i);
+
+                                                            $appointmentExists = $doctors->contains(function ($app) use ($slot, $doctor) {
                                                                 $appTime = \Carbon\Carbon::parse($app->datetime);
-                                                                return $appTime->toDateString() === $slot->toDateString() &&
-                                                                       $appTime->format('H:i') === $slot->format('H:i');
-                                                            })
-                                                            : false;
+                                                                return $app->poli_id == $doctor->id && $appTime->equalTo($slot);
+                                                            });
 
-                                                        $isToday = $slot->isToday();
-                                                        $now = now();
-                                                        $isPast = $isToday && $slot->lessThanOrEqualTo($now->addHour()->startOfHour());
-                                                        $disabled = $appointmentExists || $isPast;
-                                                    @endphp
+                                                            $isToday = $slot->isToday();
+                                                            $now = now();
+                                                            $isPast = $isToday && $slot->lessThanOrEqualTo($now->addHour()->startOfHour());
 
-                                                    <div class="col-lg-4 col-md-6 mb-3">
-                                                        <label class="w-100">
-                                                            <input type="radio"
-                                                                name="selected_slot"
-                                                                value="{{ $slot->format('Y-m-d H:i') }}"
-                                                                class="d-none slot-radio"
-                                                                @if ($disabled) disabled @endif>
+                                                            $disabled = $appointmentExists || $isPast;
+                                                        @endphp
 
-                                                            <div class="card shadow-sm h-100 hover-card
-                                                                {{ $appointmentExists ? 'bg-danger' : ($disabled ? 'bg-danger' : 'bg-success-gradient') }}
-                                                                text-white slot-card">
-                                                                <div class="card-body bubble-shadow">
-                                                                    <div class="d-flex justify-content-between">
-                                                                        <h4 class="mb-1">{{ $slot->format('H:i') }}</h4>
-                                                                        <h4 class="mb-1">{{ $slot->format('d M Y') }}</h4>
+                                                        <div class="col-lg-4 col-md-6 mb-3">
+                                                            <label class="w-100">
+                                                                <input type="radio"
+                                                                    name="selected_slot"
+                                                                    value="{{ $slot->format('Y-m-d H:i') }}"
+                                                                    data-poli="{{ $doctor->id }}"
+                                                                    class="d-none slot-radio"
+                                                                    @if ($disabled) disabled @endif
+                                                                    required>
+
+                                                                <div class="card shadow-sm h-100 hover-card
+                                                                    {{ $appointmentExists ? 'bg-danger' : ($disabled ? 'bg-danger' : 'bg-success-gradient') }}
+                                                                    text-white slot-card">
+                                                                    <div class="card-body bubble-shadow">
+                                                                        <div class="d-flex justify-content-between">
+                                                                            <h4 class="mb-1">{{ $slot->format('H:i') }}</h4>
+                                                                            <h4 class="mb-1">{{ $slot->format('d M Y') }}</h4>
+                                                                        </div>
+                                                                        <span class="badge
+                                                                            {{ $appointmentExists ? 'bg-danger' : ($disabled ? 'bg-danger' : 'bg-success') }}">
+                                                                            @if ($appointmentExists)
+                                                                                Booked
+                                                                            @elseif ($disabled)
+                                                                                Closed
+                                                                            @else
+                                                                                Available
+                                                                            @endif
+                                                                        </span>
                                                                     </div>
-                                                                    <span class="badge
-                                                                        {{ $appointmentExists ? 'bg-danger' : ($disabled ? 'bg-danger' : 'bg-success') }}">
-                                                                        @if ($appointmentExists)
-                                                                            Booked
-                                                                        @elseif ($disabled)
-                                                                            Closed
-                                                                        @else
-                                                                            Available
-                                                                        @endif
-                                                                    </span>
                                                                 </div>
-                                                            </div>
-                                                        </label>
-                                                    </div>
-                                                @endfor
-                                            </div>
+                                                            </label>
+                                                        </div>
+                                                    @endfor
+                                                </div>
+                                            @endif
                                         </div>
                                     @endfor
                                 </div>
@@ -246,6 +250,9 @@
                     </div>
                 </div>
             </div>
+
+            {{-- ✅ Hidden input that will be updated when user selects a slot --}}
+            <input type="hidden" name="poli_id" id="selected_poli_id">
 
             <div class="d-flex justify-content-end mt-3">
                 <button type="submit" class="btn btn-primary px-5 py-2">Simpan</button>
@@ -256,6 +263,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+    // === Underline animation ===
     document.querySelectorAll(".custom-nav").forEach(nav => {
         const underline = nav.querySelector(".underline");
         const links = nav.querySelectorAll(".nav-link");
@@ -272,6 +280,16 @@ document.addEventListener("DOMContentLoaded", function() {
             link.addEventListener("shown.bs.tab", function() {
                 moveUnderline(this);
             });
+        });
+    });
+
+    // === Capture poli_id when a slot is clicked ===
+    const radios = document.querySelectorAll('.slot-radio');
+    const hiddenInput = document.getElementById('selected_poli_id');
+
+    radios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            hiddenInput.value = this.dataset.poli;
         });
     });
 });

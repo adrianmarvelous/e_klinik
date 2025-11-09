@@ -24,7 +24,6 @@ class Appoinment extends Controller
         if (session('user.roles') == 'admin') {
             $users = MedicalHistory::with([
                 'patient.user',   // nested relation
-                'appointments.doctor.user'    // appointments linked to this medical history
             ])->orderBy('created_at', 'desc')
                 ->get();
         } elseif (session('user.roles') == 'patient') {
@@ -190,15 +189,22 @@ class Appoinment extends Controller
     {
         $user_id = session('user.id');
         $patient_id = Patient::where('user_id',$user_id)->value('id');
-        $doctors = User::role('doctor')
-            ->with(['doctor.appointments' => function ($q) use ($patient_id) {
-                $q->where('patient_id', $patient_id)
+        // $doctors = User::role('patient')
+        //     ->with(['polis.appointments' => function ($q) use ($patient_id) {
+        //         $q->where('patient_id', $patient_id)
+        //             ->whereBetween('datetime', [
+        //                 Carbon::today(),
+        //                 Carbon::today()->addDays(7)->endOfDay()
+        //             ]);
+        //     }])
+        //     ->get();
+
+        $doctors = Appoinments::with('patient','polis')
                     ->whereBetween('datetime', [
                         Carbon::today(),
                         Carbon::today()->addDays(7)->endOfDay()
-                    ]);
-            }])
-            ->get();
+                    ])->get();
+                    // dd($doctors);
         $polis = Polis::all();
         // $appointment = Appoinments::where('medical_history_id', $medical_history_id)
         //     ->where('patient_id', $patient_id)
@@ -273,13 +279,15 @@ class Appoinment extends Controller
             'smoking'                => ['nullable', 'string', 'max:255', new SafeInput],
             'alcohol_consumption'    => ['nullable', 'string', 'max:255', new SafeInput],
             'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
+            'selected_slot' => ['nullable', 'string', 'max:255', new SafeInput],
+            'poli_id' => ['nullable', 'string', 'max:255', new SafeInput],
         ]);
 
         try {
             DB::transaction(function () use ($validated) {
                 $patient = Patient::where('user_id', session('user.id'))->firstOrFail();
 
-                MedicalHistory::create([
+                $medical = MedicalHistory::create([
                     'patient_id'             => $patient->id,
                     'type'                   => 'keluhan',
                     'main_complaint'         => $validated['main_complaint'] ?? null,
@@ -288,6 +296,14 @@ class Appoinment extends Controller
                     'smoking'                => $validated['smoking'] ?? null,
                     'alcohol_consumption'    => $validated['alcohol_consumption'] ?? null,
                     'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
+                ]);
+
+                Appoinments::create([
+                    'medical_history_id'    => $medical->id,
+                    'patient_id'            => $patient->id,
+                    'datetime'              => $validated['selected_slot'],
+                    'status'                => 'pending',
+                    'poli_id'               => $validated['poli_id'],
                 ]);
             });
 
