@@ -41,7 +41,7 @@ class Appoinments extends Model
     {
         $date = $date ?? date('Y-m-d');
 
-        return $query->with(['patient.user', 'doctor.user',])
+        return $query->with(['patient.user'/*, 'doctor.user',*/])
                      ->whereDate('datetime', $date)
                      ->orderBy('datetime', 'desc');
     }

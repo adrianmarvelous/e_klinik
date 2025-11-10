@@ -29,12 +29,6 @@
                 </textarea>
             </div>
 
-            <div class="d-flex justify-content-end mt-3">
-                <input type="hidden" name="medical_history_id" value="{{ $data->medical_history_id }}">
-                <button class="btn btn-primary" type="submit">
-                    {{ isset($data->medicalHistory->medical_records->id) ? 'Update' : 'Simpan' }}
-                </button>
-            </div>
 
             {{-- === Jadwal Pemeriksaan === --}}
             <div class="mt-4">
@@ -42,6 +36,13 @@
                 <div id="tanggalContainer" class="mt-2"></div>
                 <button type="button" id="btnTambahJadwal" class="btn btn-primary mt-2">
                     Tambah Jadwal
+                </button>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <input type="hidden" name="medical_history_id" value="{{ $data->medical_history_id }}">
+                <input type="hidden" name="poli_id" value="{{ $data->poli_id }}">
+                <button class="btn btn-primary" type="submit">
+                    {{ isset($data->medicalHistory->medical_records->id) ? 'Update' : 'Simpan' }}
                 </button>
             </div>
         </form>
