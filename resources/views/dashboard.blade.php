@@ -505,6 +505,9 @@
 
                     @if (Route::current()->getName() == 'dashboard')
                         @if (session('user.roles') == 'patient')
+                            <div>
+                                <img class="img-fluid" src="{{ asset('banner/banner home patient.jpeg') }}" alt="">
+                            </div>
                             <!-- TimeLine -->
                             <h3 class="fw-bold mb-3">Timeline</h3>
                             <div class="row">
