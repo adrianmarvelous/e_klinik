@@ -33,6 +33,14 @@
                                 <p>{{ \Carbon\Carbon::parse($data->patient->date_of_birth)->age }} tahun</p>
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col-lg-3">
+                                <p class="fw-bold">File 1 Pasien</p>
+                            </div>
+                            <div class="col-lg-9">
+                                <a class="btn btn-primary" href="{{ asset('storage/patients/'.$data->patient->file_1) }}" target="_blank">View</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-lg-6">
                         <h2>Keluhan Pasien</h2>
