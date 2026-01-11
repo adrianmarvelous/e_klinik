@@ -2,61 +2,53 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Roles;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Example: create 10 random users
-        // User::factory(10)->create();
+        // Create roles safely
+        $roles = ['admin', 'doctor', 'patient', 'fisioterapi'];
 
-        // Create specific users manually
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'), // optional, just for login
-        ]);
+        foreach ($roles as $r) {
+            Role::firstOrCreate([
+                'name' => $r,
+                'guard_name' => 'web',
+            ]);
+        }
 
-        User::factory()->create([
-            'name' => 'Dr. James Cooper',
-            'email' => 'katim@gmail.com',
-            'password' => '$2y$12$UTeV9nt8qboNqDxn1oFUMOhWDWsJ6tQjvDfm8NKZeDQcWiLGj4um6', // already hashed
-        ]);
+        // Create users safely
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            ['name' => 'Admin', 'password' => Hash::make('password')]
+        );
 
-        User::factory()->create([
-            'name' => 'Adrian Marvel Ugrasena',
-            'email' => 'adrianmarvelugr@gmail.com',
-            'password' => '$2y$12$5moGpwog4AW3Ftsjs52oeuDwbJ8uXY2b73WsXW0aFBJNHiE6TsD/6', // already hashed
-        ]);
+        $doctor = User::firstOrCreate(
+            ['email' => 'dokter@gmail.com'],
+            ['name' => 'Dokter', 'password' => Hash::make('password')]
+        );
 
-        User::factory()->create([
-            'name' => 'Nancy Martha',
-            'email' => 'nancymartha89@gmail.com',
-            'password' => '$2y$12$MypqKtJfXJJSJqBnBQ0tgOdAng2.YNKVjHDZrloAs2wtAqfALwHEG', // already hashed
-        ]);
+        $fisioterapi = User::firstOrCreate(
+            ['email' => 'fisioterapi@gmail.com'],
+            ['name' => 'Fisioterapi', 'password' => Hash::make('password')]
+        );
 
-        Roles::factory()->create([
-            'name' => 'admin',
-            'guard_name' => 'web',
-        ]);
+        $patient = User::firstOrCreate(
+            ['email' => 'pasien@gmail.com'],
+            ['name' => 'Pasien', 'password' => Hash::make('password')]
+        );
 
-        Roles::factory()->create([
-            'name' => 'doctor',
-            'guard_name' => 'web',
-        ]);
+        // Assign roles (safe)
+        $admin->syncRoles('admin');
+        $doctor->syncRoles('doctor');
+        $fisioterapi->syncRoles('fisioterapi');
+        $patient->syncRoles('patient');
 
-        Roles::factory()->create([
-            'name' => 'patient',
-            'guard_name' => 'web',
-        ]);
-
-        // Call another seeder
+        // Call other seeders
         $this->call(PolisSeeder::class);
     }
 }

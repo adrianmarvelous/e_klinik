@@ -9,7 +9,6 @@ use App\Rules\SafeInput;
 use App\Models\User;
 use App\Models\Roles\Patient;
 
-
 class PatientController extends Controller
 {
     /**
@@ -34,51 +33,65 @@ class PatientController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', new SafeInput],
-            'dateofbirth' => ['required', 'date', new SafeInput],
-            'gender' => ['required', 'string', 'max:255', new SafeInput],
-            'phone' => ['required', 'string', 'max:255', new SafeInput],
-            'address' => ['required', 'string', 'max:255', new SafeInput],
+            'name' => ['required', 'string', 'max:255', new SafeInput()],
+            'dateofbirth' => ['required', 'date'],
+            'gender' => ['required', 'string', 'max:255', new SafeInput()],
+            'phone' => ['required', 'string', 'max:255', new SafeInput()],
+            'address' => ['required', 'string', 'max:255', new SafeInput()],
+
+            // 📁 Files
+            'file_1' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
+            'file_2' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-
         try {
-            DB::transaction(function () use ($validated) {
-                // 1. Update nama di tabel users
+            DB::transaction(function () use ($validated, $request) {
+                // 1️⃣ Update user
                 $user = User::findOrFail(session('user.id'));
                 $user->update([
                     'name' => $validated['name'],
                 ]);
 
-                // 2. Update atau buat patient
-                Patient::updateOrCreate(
+                // 2️⃣ Get or create patient
+                $patient = Patient::updateOrCreate(
                     ['user_id' => session('user.id')],
                     [
-                        'date_of_birth'  => $validated['dateofbirth'],
-                        'gender'  => $validated['gender'],
-                        'phone'   => $validated['phone'],
+                        'date_of_birth' => $validated['dateofbirth'],
+                        'gender' => $validated['gender'],
+                        'phone' => $validated['phone'],
                         'address' => $validated['address'],
-                    ]
+                    ],
                 );
+
+                // 3️⃣ Handle File 1
+                if ($request->hasFile('file_1')) {
+                    $file = $request->file('file_1');
+                    $filename = time() . '_1_' . $file->getClientOriginalName();
+                    $file->storeAs('patients', $filename, 'public');
+                    $patient->file_1 = $filename;
+                }
+
+                // 4️⃣ Handle File 2
+                if ($request->hasFile('file_2')) {
+                    $file = $request->file('file_2');
+                    $filename = time() . '_2_' . $file->getClientOriginalName();
+                    $file->storeAs('patients', $filename, 'public');
+                    $patient->file_2 = $filename;
+                }
+
+                $patient->save();
             });
-            // Get current session 'user'
+
+            // Update session name
             $userSession = session('user');
-
-            // Update only the name
             $userSession['name'] = $validated['name'];
-
-            // Save back to session
             session()->put('user', $userSession);
 
-            return redirect()
-                ->route('dashboard')
-                ->with('success', 'Patient data updated successfully!');
-
+            return redirect()->route('dashboard')->with('success', 'Patient data updated successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to update patient: ' . $e->getMessage());
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -93,10 +106,7 @@ class PatientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
@@ -104,11 +114,11 @@ class PatientController extends Controller
     public function update(Request $request, Patient $patient)
     {
         $validated = $request->validate([
-            'name'       => ['required', 'string', 'max:255', new SafeInput],
-            'dateofbirth'=> ['required', 'date', new SafeInput],
-            'gender'     => ['required', 'string', 'max:255', new SafeInput],
-            'phone'      => ['required', 'string', 'max:255', new SafeInput],
-            'address'    => ['required', 'string', 'max:255', new SafeInput],
+            'name' => ['required', 'string', 'max:255', new SafeInput()],
+            'dateofbirth' => ['required', 'date', new SafeInput()],
+            'gender' => ['required', 'string', 'max:255', new SafeInput()],
+            'phone' => ['required', 'string', 'max:255', new SafeInput()],
+            'address' => ['required', 'string', 'max:255', new SafeInput()],
         ]);
 
         try {
@@ -122,9 +132,9 @@ class PatientController extends Controller
                 // 2. Update patient
                 $patient->update([
                     'date_of_birth' => $validated['dateofbirth'],
-                    'gender'        => $validated['gender'],
-                    'phone'         => $validated['phone'],
-                    'address'       => $validated['address'],
+                    'gender' => $validated['gender'],
+                    'phone' => $validated['phone'],
+                    'address' => $validated['address'],
                 ]);
             });
 
@@ -133,16 +143,13 @@ class PatientController extends Controller
             $userSession['name'] = $validated['name'];
             session()->put('user', $userSession);
 
-            return redirect()
-                ->route('dashboard')
-                ->with('success', 'Patient data updated successfully!');
+            return redirect()->route('dashboard')->with('success', 'Patient data updated successfully!');
         } catch (\Exception $e) {
             return redirect()
                 ->route('dashboard')
                 ->with('error', 'Failed to update patient: ' . $e->getMessage());
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

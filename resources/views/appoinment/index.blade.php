@@ -98,14 +98,14 @@
                                                     </a>
                                                 </span>
 
-                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_doctor == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Dokter' }}">
+                                                {{-- <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_doctor == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Dokter' }}">
                                                     <a class="btn btn-primary m-1"
                                                     href="{{route('appoinment.sendBookingToDoctor',['patient_id' => $item->patient->id,'medical_history_id' => $item->id]) }}"
                                                     target="_blank"
                                                     onclick="{{ $item->wa_doctor == 1 ? 'return false;' : 'setTimeout(() => location.reload(), 1000)' }}">
                                                     <i class="fab fa-whatsapp"></i>
                                                     </a>
-                                                </span>
+                                                </span> --}}
 
                                             @endif
                                         @elseif (session('user.roles') == 'patient')

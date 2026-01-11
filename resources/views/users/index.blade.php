@@ -4,8 +4,11 @@
     <div class="card">
         <div class="card-body">
             <h2>List Users</h2>
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-primary" href="{{ route('users.create_patient') }}">Buat Akun Pasien</a>
+            </div>
+            <div class="table-responsive mt-3">
+                <table class="table table-striped table-hover" id="basic-datatables">
                     <thead>
                         <tr class="table-primary">
                             <th>No</th>

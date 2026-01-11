@@ -99,7 +99,7 @@ class Medical extends Controller
         $data = Appoinments::withIdAppointment($id)->first();
         $age = Carbon::parse($data->patient->date_of_birth)->age;
         $appointments = Appoinments::get();
-        // dd($appointments);
+        // dd($data);
         return view('medical.checkup', compact('data', 'age','appointments'));
     }
 

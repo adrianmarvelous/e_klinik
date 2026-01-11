@@ -40,6 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('users', UserController::class);
         Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
+        Route::get('/users/patient/create', [UserController::class, 'create_patient'])->name('users.create_patient');
+        Route::post('/users/patient/store_patient', [UserController::class, 'store_patient'])->name('users.store_patient');
+        Route::post('/users/patient/update_patient', [UserController::class, 'update_patient'])->name('users.update_patient');
     });
 });
 
