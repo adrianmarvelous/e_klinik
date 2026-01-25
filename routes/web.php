@@ -26,6 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //
     Route::resource('patient', PatientController::class);
+    Route::get('/doctor/admin_create', [DoctorController::class, 'admin_create'])->name('doctor.admin_create');
+    Route::post('/doctor/store_doctor', [DoctorController::class, 'store_doctor'])->name('doctor.store_doctor');
     Route::resource('doctor', DoctorController::class);
     Route::get('/appoinment/schedule/{patient_id}/{medical_history_id}', [Appoinment::class, 'schedule'])->name('appoinment.schedule');
     Route::get('/appoinment/sendBookingToPatient/{patient_id}/{medical_history_id}', [Appoinment::class, 'sendBookingToPatient'])->name('appoinment.sendBookingToPatient');

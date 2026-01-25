@@ -4,7 +4,8 @@
     <div class="card">
         <div class="card-body">
             <h2>List Users</h2>
-            <div class="d-flex justify-content-end">
+            <div class="d-flex justify-content-between m-3">
+                <a class="btn btn-primary" href="{{ route('doctor.admin_create') }}">Buat Akun Dokter atau Fisio</a>
                 <a class="btn btn-primary" href="{{ route('users.create_patient') }}">Buat Akun Pasien</a>
             </div>
             <div class="table-responsive mt-3">

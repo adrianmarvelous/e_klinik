@@ -78,6 +78,39 @@ class DoctorController extends Controller
         }
     }
 
+    public function admin_create()
+    {
+        return view('users.doctors.admin_create');
+    }
+    public function store_doctor(Request $request)
+    {
+        
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', new SafeInput],
+            'bio' => ['required', 'in:dokter,fisioterapi', new SafeInput],
+            'gender' => ['required', 'in:male,female', new SafeInput],
+            'specialization' => ['required', 'string', 'max:255', new SafeInput],
+            'phone' => ['required', 'string', 'max:20', new SafeInput],
+        ]);
+        
+        $validated['user_id'] = 8; // 👈 SET VALUE HERE
+        
+        // 2️⃣ Transaction
+        DB::beginTransaction();
+
+        try {
+            // 3️⃣ Insert doctor
+            Doctor::create($validated);
+
+            // 4️⃣ Commit if success
+            DB::commit();
+
+            return redirect()->route('users.index')->with('success', 'Doctors data updated successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update patient: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Display the specified resource.
      */

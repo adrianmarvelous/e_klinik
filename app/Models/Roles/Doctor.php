@@ -11,8 +11,10 @@ class Doctor extends Model
     protected $table = 'doctors';
     protected $fillable = [
         'user_id', // Assuming you want to set the ID manually
+        'name',
         'gender',
         'specialization',
+        'bio',
         'phone',
         'address',
     ];
