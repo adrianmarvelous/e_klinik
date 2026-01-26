@@ -5,6 +5,7 @@ namespace App\Models\Roles;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Appoinment\Appoinments;
+use App\Models\Medical\MedicalHistory;
 
 class Doctor extends Model
 {
@@ -26,5 +27,10 @@ class Doctor extends Model
     public function appointments()
     {
         return $this->hasMany(Appoinments::class,'doctor_id','id');
+    }
+    
+    public function medicalHistories()
+    {
+        return $this->hasMany(MedicalHistory::class, 'doctor_id', 'id');
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Roles\Patient;
 use App\Models\Appoinment\Appoinments;
 use App\Models\Medical\MedicalRecord;
+use App\Models\Roles\Doctor;
 
 class MedicalHistory extends Model
 {
@@ -36,5 +37,10 @@ class MedicalHistory extends Model
     public function medical_records()
     {
         return $this->hasOne(MedicalRecord::class);
+    }
+    
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
     }
 }

@@ -47,7 +47,7 @@ class Appoinments extends Model
     }
     public function scopeWithIdAppointment($query, $id)
     {
-        return $query->with(['patient.user', /*'doctor.user',*/'medicalHistory.medical_records'])
+        return $query->with(['patient.user', /*'doctor.user',*/'medicalHistory.medical_records','medicalHistory.doctor'])
                      ->where('medical_history_id', $id);
     }
 

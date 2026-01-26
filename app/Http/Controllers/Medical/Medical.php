@@ -8,6 +8,7 @@ use App\Rules\SafeInput;
 use App\Models\Appoinment\Appoinments;
 use App\Models\Medical\MedicalHistory;
 use App\Models\Medical\MedicalRecord;
+use App\Models\Roles\Doctor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -40,15 +41,16 @@ class Medical extends Controller
             'patient_summary' => ['nullable', 'string', new SafeInput],
             'doctor_summary' => ['nullable', 'string', new SafeInput],
             'medical_records_id' => ['nullable', 'integer'], // optional for update
+            'doctor_id' => ['required', 'integer', new SafeInput], // optional for update
             'poli_id' => ['nullable', 'integer'], // optional for update
             'jadwal_tanggal' => ['nullable', 'array'],
             'jadwal_jam' => ['nullable', 'array'],
         ]);
-        
+
         $medical_history = MedicalHistory::findOrFail($validated['medical_history_id']);
 
         try {
-            
+
             DB::beginTransaction();
             // Update if medical_records_id exists, otherwise create
             MedicalRecord::updateOrCreate(
@@ -59,9 +61,13 @@ class Medical extends Controller
                     'doctor_summary' => $validated['doctor_summary'],
                 ]
             );
+            $medical_history->update([
+                'doctor_id' => $validated['doctor_id'],
+            ]);
 
-            if($validated['jadwal_tanggal']){
-                for ($i=0; $i < count($validated['jadwal_tanggal']) ; $i++) { 
+
+            if (isset($validated['jadwal_tanggal'])) {
+                for ($i = 0; $i < count($validated['jadwal_tanggal']); $i++) {
                     $new_history = MedicalHistory::create([
                         'patient_id'                => $medical_history->patient_id,
                         'type'                      => 'keluhan',
@@ -80,7 +86,7 @@ class Medical extends Controller
                     ]);
                 }
             }
-            
+
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -99,8 +105,9 @@ class Medical extends Controller
         $data = Appoinments::withIdAppointment($id)->first();
         $age = Carbon::parse($data->patient->date_of_birth)->age;
         $appointments = Appoinments::get();
+        $doctors = Doctor::get();
         // dd($data);
-        return view('medical.checkup', compact('data', 'age','appointments'));
+        return view('medical.checkup', compact('data', 'age', 'appointments', 'doctors'));
     }
 
     /**
@@ -116,7 +123,65 @@ class Medical extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // dd($request->all());
+        $validated = $request->validate([
+            'medical_history_id' => ['required', 'integer', new SafeInput],
+            'patient_summary' => ['nullable', 'string', new SafeInput],
+            'doctor_summary' => ['nullable', 'string', new SafeInput],
+            'medical_records_id' => ['nullable', 'integer'], // optional for update
+            'doctor_id' => ['required', 'integer', new SafeInput], // optional for update
+            'poli_id' => ['nullable', 'integer'], // optional for update
+            'jadwal_tanggal' => ['nullable', 'array'],
+            'jadwal_jam' => ['nullable', 'array'],
+        ]);
+        $validated['medical_records_id'] = $id;
+        $medical_history = MedicalHistory::findOrFail($validated['medical_history_id']);
+
+        try {
+
+            DB::beginTransaction();
+            // Update if medical_records_id exists, otherwise create
+            MedicalRecord::updateOrCreate(
+                ['id' => $validated['medical_records_id'] ?? null],
+                [
+                    'medical_history_id' => $validated['medical_history_id'],
+                    'patient_summary' => $validated['patient_summary'],
+                    'doctor_summary' => $validated['doctor_summary'],
+                ]
+            );
+            $medical_history->update([
+                'doctor_id' => $validated['doctor_id'],
+            ]);
+
+
+            if (isset($validated['jadwal_tanggal'])) {
+                for ($i = 0; $i < count($validated['jadwal_tanggal']); $i++) {
+                    $new_history = MedicalHistory::create([
+                        'patient_id'                => $medical_history->patient_id,
+                        'type'                      => 'keluhan',
+                        'main_complaint'            => $medical_history->main_complaint,
+                        'additional_complaint'      => $medical_history->additional_complaint,
+                        'illnes_duration'           => $medical_history->illnes_duration,
+                        'smoking'                   => $medical_history->smoking,
+                        'alcohol_consumption'       => $medical_history->alcohol_consumption,
+                        'low_fruit_veggie_intake'   => $medical_history->low_fruit_veggie_intake,
+                    ]);
+                    Appoinments::create([
+                        'medical_history_id'        => $new_history->id,
+                        'patient_id'                => $medical_history->patient_id,
+                        'datetime' => date('Y-m-d H:i:s', strtotime($validated['jadwal_tanggal'][$i] . ' ' . $validated['jadwal_jam'][$i])),
+                        'poli_id'                   => $validated['poli_id']
+                    ]);
+                }
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
+
+        return redirect('appoinment')->with('success', 'Data medical record berhasil disimpan!');
     }
 
     /**

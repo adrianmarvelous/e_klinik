@@ -88,8 +88,8 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="index.html" class="logo">
-                        <img src="{{ asset('logo/logo mcsn.png') }}"
-                            alt="navbar brand" class="navbar-brand" height="20" />
+                        <img src="{{ asset('logo/logo mcsn.png') }}" alt="navbar brand" class="navbar-brand"
+                            height="20" />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -505,8 +505,82 @@
 
                     @if (Route::current()->getName() == 'dashboard')
                         @if (session('user.roles') == 'patient')
+                            @isset($appoinment)
+                                <div class="card m-3 p-3">
+                                    <h2>Upcoming Booking</h2>
+                                    <div class="row">
+                                        @foreach ($appoinment as $item)
+                                            <div class="col-md-4">
+                                                @php
+                                                    $statusClass = match ($item->status) {
+                                                        'cancel', 'cancelled' => 'bg-danger',
+                                                        'pending' => 'bg-primary',
+                                                        default => 'bg-secondary',
+                                                    };
+                                                @endphp
+
+                                                <div class="card  mb-3">
+
+                                                    <div class="card-header {{ $statusClass }} text-white d-flex justify-content-between align-items-center">
+                                                        <span>
+                                                            {{ date('d-M-Y', strtotime($item->datetime)) }}
+                                                        </span>
+                                                        @php
+                                                            $stillAllowed = now()->lessThan(
+                                                                \Carbon\Carbon::parse($item->datetime)->subHours(2)
+                                                            );
+                                                        @endphp
+                                                        @if ($stillAllowed)
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-link text-white p-0"
+                                                                type="button" data-bs-toggle="dropdown"
+                                                                aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('appointment.edit', $item->id) }}">
+                                                                        Reschedule
+                                                                    </a>
+                                                                </li>
+                                                                @if ($item->status == 'pending')
+                                                                    <li>
+                                                                        <hr class="dropdown-divider">
+                                                                    </li>
+                                                                    <li>
+                                                                        <form method="get"
+                                                                            action="{{ route('appointment.cancel', $item->id) }}">
+                                                                            @csrf
+                                                                            <button class="dropdown-item text-danger">
+                                                                                Cancel
+                                                                            </button>
+                                                                        </form>
+                                                                    </li>
+                                                                @endif
+                                                            </ul>
+                                                        </div>
+                                                        @endif
+
+
+                                                    </div>
+
+                                                    <div class="card-body text-primary">
+                                                        <h5 class="card-title">
+                                                            {{ date('H:i', strtotime($item->datetime)) }}
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endisset
+
                             <div>
-                                <img class="img-fluid" src="{{ asset('banner/banner home patient.jpeg') }}" alt="">
+                                <img class="img-fluid" src="{{ asset('banner/banner home patient.jpeg') }}"
+                                    alt="">
                             </div>
                             <!-- TimeLine -->
                             <h3 class="fw-bold mb-3">Timeline</h3>
@@ -553,7 +627,8 @@
                                                 </div>
                                                 <div class="timeline-body">
                                                     <p>
-                                                        Admin menjadwalkan waktu konsultasi dan menentukan dokter yang sesuai dengan keluhan pasien.
+                                                        Admin menjadwalkan waktu konsultasi dan menentukan dokter yang
+                                                        sesuai dengan keluhan pasien.
                                                     </p>
                                                 </div>
                                             </div>
@@ -579,7 +654,8 @@
                                                 </div>
                                                 <div class="timeline-body">
                                                     <p>
-                                                        Pasien hadir di klinik sakit sesuai jadwal yang telah ditentukan. lalu pasien melakukan registrasi kedatangan.
+                                                        Pasien hadir di klinik sakit sesuai jadwal yang telah
+                                                        ditentukan. lalu pasien melakukan registrasi kedatangan.
                                                     </p>
                                                 </div>
                                             </div>

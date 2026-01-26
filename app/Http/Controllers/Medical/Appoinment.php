@@ -314,6 +314,25 @@ class Appoinment extends Controller
             return back()->with('error', 'Failed to create patient medical report: ' . $e->getMessage());
         }
     }
+    public function cancel($id)
+    {
+        
+        DB::beginTransaction();
+
+        try {
+            $appointment = Appoinments::lockForUpdate()->findOrFail($id);
+
+            $appointment->status = 'cancel';
+            $appointment->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Appointment set to cancel.');
+
+        }  catch (\Exception $e) {
+            return back()->with('error', 'Failed to cancel appointment: ' . $e->getMessage());
+        }
+    }
 
 
     /**

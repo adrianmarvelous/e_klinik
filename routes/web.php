@@ -9,6 +9,7 @@ use App\Http\Controllers\Medical\Appoinment;
 use App\Http\Controllers\Medical\Attendance;
 use App\Http\Controllers\Medical\Medical;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('google.login');
 Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
@@ -20,15 +21,16 @@ Route::get('auth/google/callback', [SocialiteController::class, 'handleGoogleCal
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     //
     Route::resource('patient', PatientController::class);
     Route::get('/doctor/admin_create', [DoctorController::class, 'admin_create'])->name('doctor.admin_create');
     Route::post('/doctor/store_doctor', [DoctorController::class, 'store_doctor'])->name('doctor.store_doctor');
     Route::resource('doctor', DoctorController::class);
+    Route::get('/appoinment/schedule/cancel/{id}', [Appoinment::class, 'cancel'])->name('appointment.cancel');
+    Route::get('/appoinment/schedule/edit/{id}', [Appoinment::class, 'edit'])->name('appointment.edit');
     Route::get('/appoinment/schedule/{patient_id}/{medical_history_id}', [Appoinment::class, 'schedule'])->name('appoinment.schedule');
     Route::get('/appoinment/sendBookingToPatient/{patient_id}/{medical_history_id}', [Appoinment::class, 'sendBookingToPatient'])->name('appoinment.sendBookingToPatient');
     Route::get('/appoinment/sendBookingToDoctor/{patient_id}/{medical_history_id}', [Appoinment::class, 'sendBookingToDoctor'])->name('appoinment.sendBookingToDoctor');

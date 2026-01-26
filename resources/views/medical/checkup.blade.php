@@ -38,7 +38,8 @@
                                 <p class="fw-bold">File 1 Pasien</p>
                             </div>
                             <div class="col-lg-9">
-                                <a class="btn btn-primary" href="{{ asset('storage/patients/'.$data->patient->file_1) }}" target="_blank">View</a>
+                                <a class="btn btn-primary" href="{{ asset('storage/patients/' . $data->patient->file_1) }}"
+                                    target="_blank">View</a>
                             </div>
                         </div>
                     </div>
@@ -88,7 +89,7 @@
                             </div>
                             <div class="col-lg-9">
                                 <p>
-                                    @if ($data->medicalHistory->low_fruit_veggie_intake	 == 0)
+                                    @if ($data->medicalHistory->low_fruit_veggie_intake == 0)
                                         Tidak
                                     @else
                                         Iya
@@ -113,7 +114,6 @@
                     </div>
                 </div>
             </div>
-
             <form
                 action="{{ isset($data->medicalHistory->medical_records->id)
                     ? route('medical.update', $data->medicalHistory->medical_records->id)
@@ -129,13 +129,26 @@
                 <div class="card shadow p-3">
                     <label for="summernote" class="fw-bold">Ringkasan Pasien</label>
                     <textarea id="summernote" name="patient_summary" class="form-control">
-                    {{ $data->medicalHistory->medical_records->patient_summary ?? '' }}
-                </textarea>
+                        {{ $data->medicalHistory->medical_records->patient_summary ?? '' }}
+                    </textarea>
 
                     <label for="summernote1" class="fw-bold mt-5">Ringkasan Dokter</label>
                     <textarea id="summernote1" name="doctor_summary" class="form-control">
-                    {{ $data->medicalHistory->medical_records->doctor_summary ?? '' }}
-                </textarea>
+                        {{ $data->medicalHistory->medical_records->doctor_summary ?? '' }}
+                    </textarea>
+                    <div class="mt-3">
+                        <label for="" class="fw-bold">Pilih Dokter atau Fisioterapi</label>
+                        <select name="doctor_id" class="form-select" required>
+                            <option value="" disabled>Pilih Salah Satu</option>
+                            @foreach ($doctors as $doctor)
+                                <option value="{{ $doctor->id }}"
+                                    {{ old('doctor_id') == $data->medicalHistory->doctor->id ? 'selected' : '' }}>
+                                    {{ $doctor->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
                 </div>
 
 
