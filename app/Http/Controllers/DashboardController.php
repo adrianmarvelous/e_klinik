@@ -11,10 +11,15 @@ class DashboardController extends Controller
     public function index()
     {
         $patient = Patient::where('user_id', session('user.id'))->first();
-        $appoinment = Appoinments::where('patient_id', $patient->id)
-                                    ->where('datetime', '>=', now())
-                                    ->get();
-                                    
-        return view('dashboard',compact('appoinment'));
+
+        $appoinment = collect(); // empty collection by default
+
+        if ($patient) {
+            $appoinment = Appoinments::where('patient_id', $patient->id)
+                ->where('datetime', '>=', now())
+                ->get();
+        }
+
+        return view('dashboard', compact('appoinment'));
     }
 }

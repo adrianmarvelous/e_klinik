@@ -139,14 +139,19 @@
                     <div class="mt-3">
                         <label for="" class="fw-bold">Pilih Dokter atau Fisioterapi</label>
                         <select name="doctor_id" class="form-select" required>
-                            <option value="" disabled>Pilih Salah Satu</option>
+                            <option value="" disabled
+                                {{ old('doctor_id', optional($data->medicalHistory->doctor)->id) ? '' : 'selected' }}>
+                                Pilih Salah Satu
+                            </option>
+
                             @foreach ($doctors as $doctor)
                                 <option value="{{ $doctor->id }}"
-                                    {{ old('doctor_id') == $data->medicalHistory->doctor->id ? 'selected' : '' }}>
+                                    {{ old('doctor_id', optional($data->medicalHistory->doctor)->id) == $doctor->id ? 'selected' : '' }}>
                                     {{ $doctor->name }}
                                 </option>
                             @endforeach
                         </select>
+
 
                     </div>
                 </div>
