@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Patient\ListPatientController;
 use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Medical\Appoinment;
 use App\Http\Controllers\Medical\Attendance;
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ✅ Admin-only routes
     Route::middleware(['role:admin'])->group(function () {
+        Route::resource('list_patient', ListPatientController::class);
         Route::resource('users', UserController::class);
         Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
         Route::get('/users/patient/create', [UserController::class, 'create_patient'])->name('users.create_patient');

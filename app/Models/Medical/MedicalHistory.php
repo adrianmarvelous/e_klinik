@@ -13,6 +13,7 @@ class MedicalHistory extends Model
     protected $table = 'medical_history';
     protected $fillable = [
         'patient_id',
+        'doctor_id',
         'type',
         'description',
         'main_complaint',

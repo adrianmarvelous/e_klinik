@@ -2,6 +2,7 @@
     return [
         'admin' => [
             ['name' => 'Manage Users', 'route' => 'users.index','icon' => 'users'],
+            ['name' => 'List Patient', 'route' => 'list_patient.index','icon' => 'users'],
             ['name' => 'Appoinment', 'route' => 'appoinment.index','icon' => 'calendar'],
             ['name' => 'Attendance', 'route' => 'attendance.index','icon' => 'clock'],
         ],

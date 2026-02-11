@@ -97,6 +97,7 @@
                                                     <i class="fab fa-whatsapp"></i>
                                                     </a>
                                                 </span>
+                                                <a class="btn btn-warning" href="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit"><i class="fa fa-pen"></i></a>
 
                                                 {{-- <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_doctor == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Dokter' }}">
                                                     <a class="btn btn-primary m-1"

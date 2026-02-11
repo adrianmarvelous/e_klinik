@@ -75,8 +75,13 @@
         <div class="card-body">
             <h2>Buat Keluhan</h2>
 
-            <form action="{{ route('appoinment.store') }}" method="post">
+            <form action="{{ isset($data) ? route('appoinment.update', $data->id) : route('appoinment.store') }}"
+                method="post">
+
                 @csrf
+                @if (isset($data))
+                    @method('PUT')
+                @endif
 
                 {{-- ================= FORM KELUHAN ================= --}}
                 @php
@@ -94,10 +99,12 @@
                         </div>
                         <div class="col-lg-10">
                             <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" class="form-control"
+                                value="{{ old($field['name'], $data->medicalHistory->{$field['name']} ?? '') }}"
                                 @if (!empty($field['required'])) required @endif>
                         </div>
                     </div>
                 @endforeach
+
 
                 @php
                     $selects = [
@@ -114,13 +121,22 @@
                         </div>
                         <div class="col-lg-10">
                             <select name="{{ $select['name'] }}" class="form-select" required>
-                                <option value="" selected disabled>Silahkan Pilih</option>
-                                <option value="1">Iya</option>
-                                <option value="0">Tidak</option>
+                                <option value="" disabled>Silahkan Pilih</option>
+
+                                <option value="1"
+                                    {{ old($select['name'], $data->medicalHistory->{$select['name']} ?? null) == 1 ? 'selected' : '' }}>
+                                    Iya
+                                </option>
+
+                                <option value="0"
+                                    {{ old($select['name'], $data->medicalHistory->{$select['name']} ?? null) === 0 ? 'selected' : '' }}>
+                                    Tidak
+                                </option>
                             </select>
                         </div>
                     </div>
                 @endforeach
+
 
                 {{-- ================= PILIH JADWAL DOKTER ================= --}}
                 <div class="card mt-4">
@@ -204,10 +220,20 @@
                                                                 $appointmentExists = $doctors->contains(function (
                                                                     $app,
                                                                 ) use ($slot, $doctor) {
-                                                                    $appTime = \Carbon\Carbon::parse($app->datetime);
                                                                     return $app->poli_id == $doctor->id &&
-                                                                        $appTime->equalTo($slot);
+                                                                        \Carbon\Carbon::parse($app->datetime)->equalTo(
+                                                                            $slot,
+                                                                        );
                                                                 });
+
+                                                                $editingDateTime = isset($data)
+                                                                    ? \Carbon\Carbon::parse($data->datetime)
+                                                                    : null;
+
+                                                                $isEditingSlot =
+                                                                    $editingDateTime &&
+                                                                    $editingDateTime->equalTo($slot) &&
+                                                                    $data->poli_id == $doctor->id;
 
                                                                 $isToday = $slot->isToday();
                                                                 $now = now();
@@ -217,10 +243,11 @@
                                                                         $now->addHour()->startOfHour(),
                                                                     );
 
-                                                                // 🔴 Disable lunch break at 13:00 – 14:00
                                                                 $isLunchBreak = $slot->format('H:i') === '13:00';
+
                                                                 $disabled =
-                                                                    $appointmentExists || $isPast || $isLunchBreak;
+                                                                    !$isEditingSlot &&
+                                                                    ($appointmentExists || $isPast || $isLunchBreak);
                                                             @endphp
 
                                                             <div class="col-lg-4 col-md-6 mb-3">
@@ -229,25 +256,31 @@
                                                                         value="{{ $slot->format('Y-m-d H:i') }}"
                                                                         data-poli="{{ $doctor->id }}"
                                                                         class="d-none slot-radio"
+                                                                        @if ($isEditingSlot) checked @endif
                                                                         @if ($disabled) disabled @endif
                                                                         required>
 
                                                                     <div
                                                                         class="card shadow-sm h-100 hover-card
-                                                                    {{ $appointmentExists ? 'bg-danger' : ($disabled ? 'bg-danger' : 'bg-success-gradient') }}
-                                                                    text-white slot-card">
+                                                        {{ $isEditingSlot ? 'bg-primary' : ($appointmentExists || $disabled ? 'bg-danger' : 'bg-success-gradient') }}
+                                                        text-white slot-card">
                                                                         <div class="card-body bubble-shadow">
                                                                             <div class="d-flex justify-content-between">
                                                                                 <h4 class="mb-1">
                                                                                     {{ $slot->format('H:i') }} -
-                                                                                    {{ $end->format('H:i') }}</h4>
+                                                                                    {{ $end->format('H:i') }}
+                                                                                </h4>
                                                                                 <h4 class="mb-1">
-                                                                                    {{ $slot->format('d M Y') }}</h4>
+                                                                                    {{ $slot->format('d M Y') }}
+                                                                                </h4>
                                                                             </div>
+
                                                                             <span
                                                                                 class="badge
-    {{ $appointmentExists || $isLunchBreak || $isPast ? 'bg-danger' : 'bg-success' }}">
-                                                                                @if ($appointmentExists)
+                                                                {{ $isEditingSlot ? 'bg-info' : ($appointmentExists || $isLunchBreak || $isPast ? 'bg-danger' : 'bg-success') }}">
+                                                                                @if ($isEditingSlot)
+                                                                                    Appointment Anda
+                                                                                @elseif ($appointmentExists)
                                                                                     Booked
                                                                                 @elseif ($isLunchBreak)
                                                                                     Break
@@ -257,7 +290,6 @@
                                                                                     Available
                                                                                 @endif
                                                                             </span>
-
                                                                         </div>
                                                                     </div>
                                                                 </label>
@@ -273,6 +305,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 {{-- ✅ Hidden input that will be updated when user selects a slot --}}
                 <input type="hidden" name="poli_id" id="selected_poli_id">

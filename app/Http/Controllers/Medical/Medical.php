@@ -61,7 +61,7 @@ class Medical extends Controller
                     'doctor_summary' => $validated['doctor_summary'],
                 ]
             );
-            $medical_history->update([
+            MedicalHistory::findOrFail($validated['medical_history_id'])->update([
                 'doctor_id' => $validated['doctor_id'],
             ]);
 

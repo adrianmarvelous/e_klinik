@@ -215,6 +215,7 @@
                     selectTime.innerHTML = ''; // reset options
 
                     jamList.forEach(jam => {
+                        if (jam === '13:00') return; // 🚫 always disable 13:00
                         const fullDateTime = `${selectedDate} ${jam}`;
                         const option = document.createElement('option');
                         option.value = jam;
