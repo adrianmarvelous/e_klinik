@@ -1,6 +1,9 @@
 @extends('dashboard')
 
 @section('content')
+@php
+    session(['return_url' => url()->current()]);
+@endphp
     <div class="card">
         <div class="card-body">
             <h2>
@@ -62,6 +65,11 @@
                                             <td>{{ $item->illness_duration }}</td>
                                         </tr>
                                         <tr>
+                                            <td>Penyakit Penyerta</td>
+                                            <td>:</td>
+                                            <td>{{ $item->comorbidity }}</td>
+                                        </tr>
+                                        {{-- <tr>
                                             <td>Merokok</td>
                                             <td>:</td>
                                             <td>{{ $item->smooking == 1 ? 'Iya' : 'Tidak' }}</td>
@@ -75,11 +83,13 @@
                                             <td>Kurang Sayur Buah</td>
                                             <td>:</td>
                                             <td>{{ $item->low_fruit_veggie_intake == 1 ? 'Iya' : 'Tidak' }}</td>
-                                        </tr>
+                                        </tr> --}}
                                     </table>
                                 </td>
                                 <td>{{ date('d-M-Y H:i',strtotime($item->created_at)) }}</td>
-                                <td style="text-transform: capitalize">
+                                <td class="text-capitalize
+                                    {{ optional($item->appointments)->status === 'cancel' ? 'text-danger fw-bold' : '' }}
+                                ">
                                     {{ optional($item->appointments)->status ?? 'Not Set' }}
                                 </td>
                                 <td>{{ optional($item->appointments)->datetime ? \Carbon\Carbon::parse($item->appointments->datetime)->format('d-M-Y H:i') : '-' }}</td>
@@ -97,7 +107,7 @@
                                                     <i class="fab fa-whatsapp"></i>
                                                     </a>
                                                 </span>
-                                                <a class="btn btn-warning" href="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit"><i class="fa fa-pen"></i></a>
+                                                <a class="btn btn-warning" href="{{  route('appointment.edit',['id' => $item->appointments->id])  }}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit"><i class="fa fa-pen"></i></a>
 
                                                 {{-- <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $item->wa_doctor == 1 ? 'Pesan sudah dikirim' : 'Whatsapp Dokter' }}">
                                                     <a class="btn btn-primary m-1"

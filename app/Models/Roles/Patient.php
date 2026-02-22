@@ -15,6 +15,7 @@ class Patient extends Model
         'gender',
         'phone',
         'address',
+        'previous_illnes',
         'file_1',
         'file_2',
     ];

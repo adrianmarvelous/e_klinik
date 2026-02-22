@@ -83,6 +83,15 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col-lg-2">
+                            <label for="address">Riwayat Penyakit Terdahulu</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="text" name="previous_illnes" class="form-control" placeholder="Masukan Alamat Anda"
+                                value="{{ old('address', $patient->previous_illnes ?? '') }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-2">
                             <label class="fw-bold">Upload Hasil Lab / CT Scan</label>
                         </div>
                         <div class="col-lg-10">

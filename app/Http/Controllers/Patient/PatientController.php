@@ -38,6 +38,7 @@ class PatientController extends Controller
             'gender' => ['required', 'string', 'max:255', new SafeInput()],
             'phone' => ['required', 'string', 'max:255', new SafeInput()],
             'address' => ['required', 'string', 'max:255', new SafeInput()],
+            'previous_illnes' => ['required', 'string', 'max:255', new SafeInput()],
 
             // 📁 Files
             'file_1' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
@@ -60,13 +61,14 @@ class PatientController extends Controller
                         'gender' => $validated['gender'],
                         'phone' => $validated['phone'],
                         'address' => $validated['address'],
+                        'previous_illnes' => $validated['previous_illnes'],
                     ],
                 );
 
                 // 3️⃣ Handle File 1
                 if ($request->hasFile('file_1')) {
                     $file = $request->file('file_1');
-                    $filename = time() . '_1_' . $file->getClientOriginalName();
+                    $filename = time() . '_1_' . 'file_1';
                     $file->storeAs('patients', $filename, 'public');
                     $patient->file_1 = $filename;
                 }
@@ -74,7 +76,7 @@ class PatientController extends Controller
                 // 4️⃣ Handle File 2
                 if ($request->hasFile('file_2')) {
                     $file = $request->file('file_2');
-                    $filename = time() . '_2_' . $file->getClientOriginalName();
+                    $filename = time() . '_2_' . 'file_2';
                     $file->storeAs('patients', $filename, 'public');
                     $patient->file_2 = $filename;
                 }
@@ -119,6 +121,7 @@ class PatientController extends Controller
             'gender' => ['required', 'string', 'max:255', new SafeInput()],
             'phone' => ['required', 'string', 'max:255', new SafeInput()],
             'address' => ['required', 'string', 'max:255', new SafeInput()],
+            'previous_illnes' => ['required', 'string', 'max:255', new SafeInput()],
         ]);
 
         try {
@@ -135,6 +138,7 @@ class PatientController extends Controller
                     'gender' => $validated['gender'],
                     'phone' => $validated['phone'],
                     'address' => $validated['address'],
+                    'previous_illnes' => $validated['previous_illnes'],
                 ]);
             });
 

@@ -89,6 +89,7 @@
                         ['label' => 'Keluhan Utama', 'name' => 'main_complaint', 'type' => 'text', 'required' => true],
                         ['label' => 'Keluhan Tambahan', 'name' => 'additional_complaint', 'type' => 'text'],
                         ['label' => 'Lama Sakit', 'name' => 'illness_duration', 'type' => 'text', 'required' => true],
+                        ['label' => 'Penyakit Penyerta', 'name' => 'comorbidity', 'type' => 'text', 'required' => true],
                     ];
                 @endphp
 
@@ -106,7 +107,7 @@
                 @endforeach
 
 
-                @php
+                {{-- @php
                     $selects = [
                         ['label' => 'Merokok', 'name' => 'smoking'],
                         ['label' => 'Konsumsi Alkohol', 'name' => 'alcohol_consumption'],
@@ -135,7 +136,7 @@
                             </select>
                         </div>
                     </div>
-                @endforeach
+                @endforeach --}}
 
 
                 {{-- ================= PILIH JADWAL DOKTER ================= --}}

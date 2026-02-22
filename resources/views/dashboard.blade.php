@@ -87,7 +87,7 @@
             <div class="sidebar-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-                    <a href="index.html" class="logo">
+                    <a href="{{ route('dashboard') }}" class="logo">
                         <img src="{{ asset('logo/logo mcsn.png') }}" alt="navbar brand" class="navbar-brand"
                             height="20" />
                     </a>
@@ -108,7 +108,7 @@
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <ul class="nav nav-secondary">
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                                 <i class="fas fa-home"></i>
                                 <p>Dashboard</p>
@@ -123,12 +123,12 @@
                                     </li>
                                 </ul>
                             </div>
-                        </li>
+                        </li> --}}
                         <li class="nav-section">
                             <span class="sidebar-mini-icon">
                                 <i class="fa fa-ellipsis-h"></i>
                             </span>
-                            <h4 class="text-section">Manu</h4>
+                            <h4 class="text-section">Menu</h4>
                         </li>
                         @foreach (config('menu.' . auth()->user()->getRoleNames()->first()) as $menu)
                             {{-- <li><a href="{{ route($menu['route']) }}">{{ $menu['name'] }}</a></li> --}}
@@ -175,18 +175,18 @@
                     <div class="container-fluid">
                         <nav
                             class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex">
-                            <div class="input-group">
+                            {{-- <div class="input-group">
                                 <div class="input-group-prepend">
                                     <button type="submit" class="btn btn-search pe-1">
                                         <i class="fa fa-search search-icon"></i>
                                     </button>
                                 </div>
                                 <input type="text" placeholder="Search ..." class="form-control" />
-                            </div>
+                            </div> --}}
                         </nav>
 
                         <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
-                            <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
+                            {{-- <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                                     role="button" aria-expanded="false" aria-haspopup="true">
                                     <i class="fa fa-search"></i>
@@ -402,7 +402,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </li> --}}
 
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
@@ -440,8 +440,8 @@
                                                     Profile</a>
                                                 <div class="dropdown-divider"></div>
                                             @endif
-                                            <a class="dropdown-item" href="#">Account Setting</a>
-                                            <div class="dropdown-divider"></div>
+                                            {{-- <a class="dropdown-item" href="#">Account Setting</a>
+                                            <div class="dropdown-divider"></div> --}}
                                             <a class="dropdown-item" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                 Logout
@@ -577,15 +577,355 @@
                                     </div>
                                 </div>
                             @endisset
-
-                            <div>
-                                <img class="img-fluid" src="{{ asset('banner/banner home patient.jpeg') }}"
-                                    alt="">
+                            <div class="container">
+                                <div class="card p-2">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <h3 class="text-center">Biaya Assesmen dan Terapi Fisioterapi & Okupasi (Sesi I)</h3>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered text-uppercase">
+                                                    <thead class="table-primary">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="text-center">Keterangan</th>
+                                                            <th class="text-center">Program</th>
+                                                            <th class="text-center">Harga Satuan</th>
+                                                            <th class="text-center">Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>Dokter Rehab</td>
+                                                            <td>ASS, MON, EVL</td>
+                                                            <td class="text-end">350.000</td>
+                                                            <td class="text-end">1.050.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2</td>
+                                                            <td>Terapis ft & ot</td>
+                                                            <td>Assesment</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">578.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>3</td>
+                                                            <td>fisioterapi</td>
+                                                            <td>terapi regular 12x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">3.468.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>4</td>
+                                                            <td>okupassi terapi</td>
+                                                            <td>terapi regular 12x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">3.468.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td colspan="3">administrasi</td>
+                                                            <td class="text-end">30.000</td>
+                                                        </tr>
+                                                        <tr class="table-dark">
+                                                            <td colspan="4" class="text-center fw-bold">Total Biaya</td>
+                                                            <td class="text-ritgh fw-bold">8.594.000</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <h3 class="text-center mt-3">Biaya Assesmen dan Terapi Fisioterapi & Okupasi (Sesi II)</h3>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered text-uppercase">
+                                                    <thead class="table-primary">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="text-center">Keterangan</th>
+                                                            <th class="text-center">Program</th>
+                                                            <th class="text-center">Harga Satuan</th>
+                                                            <th class="text-center">Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>fisioterapi</td>
+                                                            <td>terapi regular 15x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">4.335.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2</td>
+                                                            <td>okupassi terapi</td>
+                                                            <td>terapi regular 15x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">4.335.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>3</td>
+                                                            <td>Terapis ft & ot</td>
+                                                            <td>evaluasi</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">578.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td colspan="3">administrasi</td>
+                                                            <td class="text-end">30.000</td>
+                                                        </tr>
+                                                        <tr class="table-dark">
+                                                            <td colspan="4" class="text-center fw-bold">Total Biaya</td>
+                                                            <td class="text-ritgh fw-bold">9.278.000</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <h3 class="text-center mt-3 text-capitalize">paket muskulo and physical disorder </h3>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered text-uppercase">
+                                                    <thead class="table-primary">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="text-center">Keterangan</th>
+                                                            <th class="text-center">Program</th>
+                                                            <th class="text-center">Harga Satuan</th>
+                                                            <th class="text-center">Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>assement</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">289.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>terapi regular 3x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">867.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td colspan="3">administrasi</td>
+                                                            <td class="text-end">30.000</td>
+                                                        </tr>
+                                                        <tr class="table-dark">
+                                                            <td colspan="4" class="text-center fw-bold">Total Biaya</td>
+                                                            <td class="text-ritgh fw-bold">1.186.000</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered text-uppercase">
+                                                    <thead class="table-primary">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="text-center">Keterangan</th>
+                                                            <th class="text-center">Program</th>
+                                                            <th class="text-center">Harga Satuan</th>
+                                                            <th class="text-center">Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>dokter</td>
+                                                            <td>assement</td>
+                                                            <td class="text-end">350.000</td>
+                                                            <td class="text-end">350.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>assesment</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">289.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>3</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>terapi reguler 6x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">1.734.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>4</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>evaluasi</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">289.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>5</td>
+                                                            <td>dokter</td>
+                                                            <td>evaluasi</td>
+                                                            <td class="text-end">350.000</td>
+                                                            <td class="text-end">350.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td colspan="3">administrasi</td>
+                                                            <td class="text-end">30.000</td>
+                                                        </tr>
+                                                        <tr class="table-dark">
+                                                            <td colspan="4" class="text-center fw-bold">Total Biaya</td>
+                                                            <td class="text-ritgh fw-bold">3.042.000</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered text-uppercase">
+                                                    <thead class="table-primary">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="text-center">Keterangan</th>
+                                                            <th class="text-center">Program</th>
+                                                            <th class="text-center">Harga Satuan</th>
+                                                            <th class="text-center">Harga</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>dokter</td>
+                                                            <td>assement</td>
+                                                            <td class="text-end">350.000</td>
+                                                            <td class="text-end">350.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>assesment</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">289.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>3</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>terapi reguler 10x</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">2.890.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>4</td>
+                                                            <td>Fisioterapi</td>
+                                                            <td>evaluasi</td>
+                                                            <td class="text-end">289.000</td>
+                                                            <td class="text-end">289.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>5</td>
+                                                            <td>dokter</td>
+                                                            <td>evaluasi</td>
+                                                            <td class="text-end">350.000</td>
+                                                            <td class="text-end">350.000</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td colspan="3">administrasi</td>
+                                                            <td class="text-end">30.000</td>
+                                                        </tr>
+                                                        <tr class="table-dark">
+                                                            <td colspan="4" class="text-center fw-bold">Total Biaya</td>
+                                                            <td class="text-ritgh fw-bold">4.198.000</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <h3 class="mt-3">1 program setara 1jam/60 menit terapi</h3>
+                                                <h3 class="">Deposit tidak dapat di refund, namun dapat di alihkan</h3>
+                                                <table class="table table-bordered text-uppercase">
+                                                    <thead class="table-primary">
+                                                        <tr>
+                                                            <th class="text-center">No</th>
+                                                            <th class="text-center">Program</th>
+                                                            <th class="text-center">Harga Satuan</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>konsultasi dokter</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>350.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2</td>
+                                                            <td>konsultasi psikolog</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>350.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>3</td>
+                                                            <td>assesment/evaluasi terapi</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>289.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>4</td>
+                                                            <td>fisioterapi</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>289.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>5</td>
+                                                            <td>okupasi terapi</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>289.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>6</td>
+                                                            <td>terapi wicara</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>289.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>7</td>
+                                                            <td>terapi muskulo (fisoiterai)</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>289.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>8</td>
+                                                            <td>hydroterapi hot</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>347.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>9</td>
+                                                            <td>hydroterapi cold</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>289.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>10</td>
+                                                            <td>akupuntur stroke</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>338.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>11</td>
+                                                            <td>akupuntur non stroke</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>352.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>12</td>
+                                                            <td>home care</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>357.000</p></div></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>13</td>
+                                                            <td>administrasi</td>
+                                                            <td><div class="d-flex justify-content-between"><p>Rp</p><p>30.000</p></div></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            {{-- <div>
+                                <img class="img-fluid" src="{{ asset('banner/banner home patient.jpeg') }}" alt="">
+                            </div> --}}
                             <!-- TimeLine -->
                             <h3 class="fw-bold mb-3">Timeline</h3>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12 card">
                                     <ul class="timeline">
                                         {{-- <li>
                                             <div class="timeline-badge"><i class="far fa-paper-plane"></i></div>

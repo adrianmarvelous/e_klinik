@@ -1,6 +1,9 @@
 @extends('dashboard')
 
 @section('content')
+@php
+    session(['return_url' => url()->current()]);
+@endphp
     <div class="card">
         <div class="card-body">
             <h1>Detail Pasien</h1>

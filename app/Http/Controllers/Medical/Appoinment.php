@@ -24,6 +24,7 @@ class Appoinment extends Controller
         if (session('user.roles') == 'admin') {
             $users = MedicalHistory::with([
                 'patient.user',   // nested relation
+                'appointments'
             ])->orderBy('created_at', 'desc')
                 ->get();
         } elseif (session('user.roles') == 'patient') {
@@ -276,9 +277,10 @@ class Appoinment extends Controller
             'main_complaint'         => ['nullable', 'string', 'max:1000', new SafeInput],
             'additional_complaint'   => ['nullable', 'string', 'max:1000', new SafeInput],
             'illness_duration'       => ['nullable', 'string', 'max:255', new SafeInput],
-            'smoking'                => ['nullable', 'string', 'max:255', new SafeInput],
-            'alcohol_consumption'    => ['nullable', 'string', 'max:255', new SafeInput],
-            'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
+            'comorbidity'       => ['nullable', 'string', 'max:255', new SafeInput],
+            // 'smoking'                => ['nullable', 'string', 'max:255', new SafeInput],
+            // 'alcohol_consumption'    => ['nullable', 'string', 'max:255', new SafeInput],
+            // 'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
             'selected_slot' => ['nullable', 'string', 'max:255', new SafeInput],
             'poli_id' => ['nullable', 'string', 'max:255', new SafeInput],
         ]);
@@ -293,9 +295,10 @@ class Appoinment extends Controller
                     'main_complaint'         => $validated['main_complaint'] ?? null,
                     'additional_complaint'   => $validated['additional_complaint'] ?? null,
                     'illness_duration'       => $validated['illness_duration'] ?? null,
-                    'smoking'                => $validated['smoking'] ?? null,
-                    'alcohol_consumption'    => $validated['alcohol_consumption'] ?? null,
-                    'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
+                    'comorbidity'       => $validated['comorbidity'] ?? null,
+                    // 'smoking'                => $validated['smoking'] ?? null,
+                    // 'alcohol_consumption'    => $validated['alcohol_consumption'] ?? null,
+                    // 'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
                 ]);
 
                 Appoinments::create([
@@ -350,6 +353,7 @@ class Appoinment extends Controller
         $data = Appoinments::with('medicalHistory')
             ->where('id', $id)
             ->firstOrFail();
+            // dd($data);
 
         $user_id = session('user.id');
         $patient_id = Patient::where('user_id', $user_id)->value('id');
@@ -382,9 +386,10 @@ class Appoinment extends Controller
             'main_complaint'          => ['nullable', 'string', 'max:1000', new SafeInput],
             'additional_complaint'    => ['nullable', 'string', 'max:1000', new SafeInput],
             'illness_duration'        => ['nullable', 'string', 'max:255', new SafeInput],
-            'smoking'                 => ['nullable', 'string', 'max:255', new SafeInput],
-            'alcohol_consumption'     => ['nullable', 'string', 'max:255', new SafeInput],
-            'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
+            'comorbidity'        => ['nullable', 'string', 'max:255', new SafeInput],
+            // 'smoking'                 => ['nullable', 'string', 'max:255', new SafeInput],
+            // 'alcohol_consumption'     => ['nullable', 'string', 'max:255', new SafeInput],
+            // 'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
             'selected_slot'           => ['nullable', 'string', 'max:255', new SafeInput],
             'poli_id'                 => ['nullable', 'string', 'max:255', new SafeInput],
         ]);
@@ -412,9 +417,10 @@ class Appoinment extends Controller
                         'main_complaint'          => $validated['main_complaint'] ?? null,
                         'additional_complaint'    => $validated['additional_complaint'] ?? null,
                         'illness_duration'        => $validated['illness_duration'] ?? null,
-                        'smoking'                 => $validated['smoking'] ?? null,
-                        'alcohol_consumption'     => $validated['alcohol_consumption'] ?? null,
-                        'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
+                        'comorbidity'             => $validated['comorbidity'] ?? null,
+                        // 'smoking'                 => $validated['smoking'] ?? null,
+                        // 'alcohol_consumption'     => $validated['alcohol_consumption'] ?? null,
+                        // 'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
                     ]);
                 } else {
                     // fallback jika data lama belum punya medical history
@@ -424,9 +430,10 @@ class Appoinment extends Controller
                         'main_complaint'          => $validated['main_complaint'] ?? null,
                         'additional_complaint'    => $validated['additional_complaint'] ?? null,
                         'illness_duration'        => $validated['illness_duration'] ?? null,
-                        'smoking'                 => $validated['smoking'] ?? null,
-                        'alcohol_consumption'     => $validated['alcohol_consumption'] ?? null,
-                        'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
+                        'comorbidity'        => $validated['comorbidity'] ?? null,
+                        // 'smoking'                 => $validated['smoking'] ?? null,
+                        // 'alcohol_consumption'     => $validated['alcohol_consumption'] ?? null,
+                        // 'low_fruit_veggie_intake' => $validated['low_fruit_veggie_intake'] ?? null,
                     ]);
 
                     $appointment->medical_history_id = $medical->id;
@@ -444,8 +451,7 @@ class Appoinment extends Controller
                     ->route('dashboard')
                     ->with('success', 'Medical report data updated successfully!');
             } else {
-                return redirect()
-                    ->route('list_patient.show', $patient->id)
+                return redirect(session('return_url'))
                     ->with('success', 'Medical report data updated successfully!');
             }
         } catch (\Exception $e) {

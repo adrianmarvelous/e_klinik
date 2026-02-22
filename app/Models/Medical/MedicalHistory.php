@@ -19,6 +19,7 @@ class MedicalHistory extends Model
         'main_complaint',
         'additional_complaint',
         'illness_duration',
+        'comorbidity',
         'smoking',
         'alcohol_consumption',
         'low_fruit_veggie_intake',
