@@ -188,8 +188,12 @@ class Appoinment extends Controller
      */
     public function create()
     {
-        $user_id = session('user.id');
-        $patient_id = Patient::where('user_id', $user_id)->value('id');
+        $patient_id = null;
+        if(session('user.roles') == 'patient'){
+            $user_id = session('user.id');
+            $patient_id = Patient::where('user_id', $user_id)->value('id');
+        }
+        $patients = Patient::with('user')->get();
         // $doctors = User::role('patient')
         //     ->with(['polis.appointments' => function ($q) use ($patient_id) {
         //         $q->where('patient_id', $patient_id)
@@ -213,12 +217,13 @@ class Appoinment extends Controller
         // if ($appointment) {
         //     $appointment_id = $appointment->id;
         // }
-        $data = compact('doctors', 'patient_id', 'polis');
+        $data = compact('doctors', 'patient_id', 'polis','patients');
+        // dd($patients);
 
         // if ($appointment) {
         //     $data['appointment_id'] = $appointment_id;
         // }
-
+        
         return view('appoinment.create', $data);
     }
     public function save_schedule(Request $request)
@@ -273,24 +278,32 @@ class Appoinment extends Controller
 
     public function store(Request $request)
     {
+        // dd($request);
         $validated = $request->validate([
             'main_complaint'         => ['nullable', 'string', 'max:1000', new SafeInput],
             'additional_complaint'   => ['nullable', 'string', 'max:1000', new SafeInput],
             'illness_duration'       => ['nullable', 'string', 'max:255', new SafeInput],
-            'comorbidity'       => ['nullable', 'string', 'max:255', new SafeInput],
+            'comorbidity'               => ['nullable', 'string', 'max:255', new SafeInput],
             // 'smoking'                => ['nullable', 'string', 'max:255', new SafeInput],
             // 'alcohol_consumption'    => ['nullable', 'string', 'max:255', new SafeInput],
             // 'low_fruit_veggie_intake' => ['nullable', 'string', 'max:255', new SafeInput],
             'selected_slot' => ['nullable', 'string', 'max:255', new SafeInput],
             'poli_id' => ['nullable', 'string', 'max:255', new SafeInput],
+            'patient_id' => ['nullable', 'string', 'max:255', new SafeInput],
         ]);
 
         try {
             DB::transaction(function () use ($validated) {
-                $patient = Patient::where('user_id', session('user.id'))->firstOrFail();
+                if(session('user.roles') == 'patient'){
+                    $patient = Patient::where('user_id', session('user.id'))->firstOrFail();
+
+                    $patient_id = $patient->id;
+                }else{
+                    $patient_id = $validated['patient_id'];
+                }
 
                 $medical = MedicalHistory::create([
-                    'patient_id'             => $patient->id,
+                    'patient_id'             => $patient_id,
                     'type'                   => 'keluhan',
                     'main_complaint'         => $validated['main_complaint'] ?? null,
                     'additional_complaint'   => $validated['additional_complaint'] ?? null,
@@ -303,16 +316,22 @@ class Appoinment extends Controller
 
                 Appoinments::create([
                     'medical_history_id'    => $medical->id,
-                    'patient_id'            => $patient->id,
+                    'patient_id'            => $patient_id,
                     'datetime'              => $validated['selected_slot'],
                     'status'                => 'pending',
                     'poli_id'               => $validated['poli_id'],
                 ]);
             });
 
-            return redirect()
-                ->route('dashboard')
-                ->with('success', 'Medical report data created successfully!');
+            if(session('user.roles') == 'patient'){
+                return redirect()
+                    ->route('dashboard')
+                    ->with('success', 'Medical report data created successfully!');
+            }else{
+                return redirect()
+                    ->route('appoinment.index')
+                    ->with('success', 'Medical report data created successfully!');
+            }
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to create patient medical report: ' . $e->getMessage());
         }

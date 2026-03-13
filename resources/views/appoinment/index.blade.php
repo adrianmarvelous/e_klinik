@@ -15,6 +15,9 @@
                     List Pasien
                 @endif
             </h2>
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-primary mb-3 me-3" href="{{ route('appoinment.create') }}">Daftarkan Pasien</a>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-hover" id="basic-datatables">
                     <thead>

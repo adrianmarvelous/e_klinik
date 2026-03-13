@@ -13,6 +13,11 @@ class MedicalRecord extends Model
         'medical_history_id',
         'patient_summary',
         'doctor_summary',
+        'heart_rate',
+        'subjective',
+        'objective',
+        'assessment',
+        'plan',
     ];
 
     public function medical_history()

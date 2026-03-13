@@ -38,8 +38,14 @@ class Medical extends Controller
         // dd($request->all());
         $validated = $request->validate([
             'medical_history_id' => ['required', 'integer', new SafeInput],
-            'patient_summary' => ['nullable', 'string', new SafeInput],
-            'doctor_summary' => ['nullable', 'string', new SafeInput],
+            'subjective' => ['required', 'string', new SafeInput],
+            'objective' => ['required', 'string', new SafeInput],
+            'assesment' => ['required', 'string', new SafeInput],
+            'plan' => ['required', 'string', new SafeInput],
+            'blood_presure' => ['required', 'string', new SafeInput],
+            'height' => ['required', 'integer', new SafeInput],
+            'weight' => ['required', 'integer', new SafeInput],
+            'heart_rate' => ['required', 'integer', new SafeInput],
             'medical_records_id' => ['nullable', 'integer'], // optional for update
             'doctor_id' => ['required', 'integer', new SafeInput], // optional for update
             'poli_id' => ['nullable', 'integer'], // optional for update
@@ -57,12 +63,18 @@ class Medical extends Controller
                 ['id' => $validated['medical_records_id'] ?? null],
                 [
                     'medical_history_id' => $validated['medical_history_id'],
-                    'patient_summary' => $validated['patient_summary'],
-                    'doctor_summary' => $validated['doctor_summary'],
+                    'subjective' => $validated['subjective'],
+                    'objective' => $validated['objective'],
+                    'assesment' => $validated['assesment'],
+                    'plan' => $validated['plan'],
                 ]
             );
             MedicalHistory::findOrFail($validated['medical_history_id'])->update([
                 'doctor_id' => $validated['doctor_id'],
+                'blood_presure' => $validated['blood_presure'],
+                'height' => $validated['height'],
+                'weight' => $validated['weight'],
+                'heart_rate' => $validated['heart_rate'],
             ]);
 
 
@@ -74,9 +86,6 @@ class Medical extends Controller
                         'main_complaint'            => $medical_history->main_complaint,
                         'additional_complaint'      => $medical_history->additional_complaint,
                         'illnes_duration'           => $medical_history->illnes_duration,
-                        'smoking'                   => $medical_history->smoking,
-                        'alcohol_consumption'       => $medical_history->alcohol_consumption,
-                        'low_fruit_veggie_intake'   => $medical_history->low_fruit_veggie_intake,
                     ]);
                     Appoinments::create([
                         'medical_history_id'        => $new_history->id,
@@ -126,8 +135,16 @@ class Medical extends Controller
         // dd($request->all());
         $validated = $request->validate([
             'medical_history_id' => ['required', 'integer', new SafeInput],
-            'patient_summary' => ['nullable', 'string', new SafeInput],
-            'doctor_summary' => ['nullable', 'string', new SafeInput],
+            'subjective' => ['required', 'string', new SafeInput],
+            'objective' => ['required', 'string', new SafeInput],
+            'assesment' => ['required', 'string', new SafeInput],
+            'plan' => ['required', 'string', new SafeInput],
+            'blood_presure' => ['required', 'integer', new SafeInput],
+            'height' => ['required', 'integer', new SafeInput],
+            'weight' => ['required', 'integer', new SafeInput],
+            'heart_rate' => ['required', 'integer', new SafeInput],
+            // 'patient_summary' => ['nullable', 'string', new SafeInput],
+            // 'doctor_summary' => ['nullable', 'string', new SafeInput],
             'medical_records_id' => ['nullable', 'integer'], // optional for update
             'doctor_id' => ['required', 'integer', new SafeInput], // optional for update
             'poli_id' => ['nullable', 'integer'], // optional for update
@@ -145,8 +162,12 @@ class Medical extends Controller
                 ['id' => $validated['medical_records_id'] ?? null],
                 [
                     'medical_history_id' => $validated['medical_history_id'],
-                    'patient_summary' => $validated['patient_summary'],
-                    'doctor_summary' => $validated['doctor_summary'],
+                    'subjective' => $validated['subjective'],
+                    'objective' => $validated['objective'],
+                    'assesment' => $validated['assesment'],
+                    'plan' => $validated['plan'],
+                    // 'patient_summary' => $validated['patient_summary'],
+                    // 'doctor_summary' => $validated['doctor_summary'],
                 ]
             );
             $medical_history->update([
@@ -162,9 +183,9 @@ class Medical extends Controller
                         'main_complaint'            => $medical_history->main_complaint,
                         'additional_complaint'      => $medical_history->additional_complaint,
                         'illnes_duration'           => $medical_history->illnes_duration,
-                        'smoking'                   => $medical_history->smoking,
-                        'alcohol_consumption'       => $medical_history->alcohol_consumption,
-                        'low_fruit_veggie_intake'   => $medical_history->low_fruit_veggie_intake,
+                        // 'smoking'                   => $medical_history->smoking,
+                        // 'alcohol_consumption'       => $medical_history->alcohol_consumption,
+                        // 'low_fruit_veggie_intake'   => $medical_history->low_fruit_veggie_intake,
                     ]);
                     Appoinments::create([
                         'medical_history_id'        => $new_history->id,

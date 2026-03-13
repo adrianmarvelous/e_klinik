@@ -92,6 +92,35 @@
                         ['label' => 'Penyakit Penyerta', 'name' => 'comorbidity', 'type' => 'text', 'required' => true],
                     ];
                 @endphp
+                @if (session('user.roles') != 'patient')
+                    <div class="row mt-3">
+                        <div class="col-lg-2">
+                            <label class="fw-bold form-label mb-0">Pilih Pasien</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input class="form-control" list="patient_list" id="patient_name" placeholder="Cari pasien...">
+                            <input type="hidden" name="patient_id" id="patient_id">
+
+                            <datalist id="patient_list">
+                                @foreach ($patients as $patient_item)
+                                    <option value="{{ $patient_item->user->name }}" data-id="{{ $patient_item->id }}">
+                                @endforeach
+                            </datalist>
+                            <script>
+                                document.getElementById('patient_name').addEventListener('input', function() {
+                                    let input = this.value;
+                                    let options = document.querySelectorAll('#patient_list option');
+
+                                    options.forEach(function(option) {
+                                        if (option.value === input) {
+                                            document.getElementById('patient_id').value = option.dataset.id;
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                @endif
 
                 @foreach ($fields as $field)
                     <div class="row mt-3">

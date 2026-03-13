@@ -135,14 +135,58 @@
 
                 {{-- === Ringkasan === --}}
                 <div class="card shadow p-3">
-                    <label for="summernote" class="fw-bold">Ringkasan Pasien</label>
-                    <textarea id="summernote" name="patient_summary" class="form-control">
-                        {{ $data->medicalHistory->medical_records->patient_summary ?? '' }}
+                    <h2>Vital Sign</h2>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <label for="">Tekanan darah</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="number" name="blood_presure" class="form-control" value="{{ $data->medicalHistory->blood_presure }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-2">
+                            <label for="">Tinggi badan</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="number" name="height" class="form-control" value="{{ $data->medicalHistory->height }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-2">
+                            <label for="">Berat badan</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="number" name="weight" class="form-control" value="{{ $data->medicalHistory->weight }}">
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-lg-2">
+                            <label for="">Detak Jantung</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="number" name="heart_rate" class="form-control" value="{{ $data->medicalHistory->heart_rate }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow p-3">
+                    <label for="summernote" class="fw-bold">Subjective</label>
+                    <textarea id="summernote" name="subjective" class="form-control">
+                        {{ $data->medicalHistory->medical_records->subjective ?? '' }}
                     </textarea>
 
-                    <label for="summernote1" class="fw-bold mt-5">Ringkasan Dokter</label>
-                    <textarea id="summernote1" name="doctor_summary" class="form-control">
-                        {{ $data->medicalHistory->medical_records->doctor_summary ?? '' }}
+                    <label for="summernote1" class="fw-bold mt-5">Objective </label>
+                    <textarea id="summernote1" name="objective" class="form-control">
+                        {{ $data->medicalHistory->medical_records->objective ?? '' }}
+                    </textarea>
+                    <label for="summernote2" class="fw-bold">Assessment</label>
+                    <textarea id="summernote2" name="assesment" class="form-control">
+                        {{ $data->medicalHistory->medical_records->assesment ?? '' }}
+                    </textarea>
+
+                    <label for="summernote3" class="fw-bold mt-5">Plan</label>
+                    <textarea id="summernote3" name="plan" class="form-control">
+                        {{ $data->medicalHistory->medical_records->plan ?? '' }}
                     </textarea>
                     <div class="mt-3">
                         <label for="" class="fw-bold">Pilih Dokter atau Fisioterapi</label>
