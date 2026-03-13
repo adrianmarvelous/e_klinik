@@ -164,7 +164,7 @@ class Medical extends Controller
                     'medical_history_id' => $validated['medical_history_id'],
                     'subjective' => $validated['subjective'],
                     'objective' => $validated['objective'],
-                    'assesment' => $validated['assesment'],
+                    'assessment' => $validated['assesment'],
                     'plan' => $validated['plan'],
                     // 'patient_summary' => $validated['patient_summary'],
                     // 'doctor_summary' => $validated['doctor_summary'],
@@ -172,6 +172,10 @@ class Medical extends Controller
             );
             $medical_history->update([
                 'doctor_id' => $validated['doctor_id'],
+                'blood_pressure' => $validated['blood_presure'],
+                'height' => $validated['height'],
+                'weight' => $validated['weight'],
+                'heart_rate' => $validated['heart_rate'],
             ]);
 
 
@@ -183,6 +187,10 @@ class Medical extends Controller
                         'main_complaint'            => $medical_history->main_complaint,
                         'additional_complaint'      => $medical_history->additional_complaint,
                         'illnes_duration'           => $medical_history->illnes_duration,
+                        'blood_pressure'           => $medical_history->blood_presure,
+                        'height'           => $medical_history->height,
+                        'weight'           => $medical_history->weight,
+                        'heart_rate'           => $medical_history->heart_rate,
                         // 'smoking'                   => $medical_history->smoking,
                         // 'alcohol_consumption'       => $medical_history->alcohol_consumption,
                         // 'low_fruit_veggie_intake'   => $medical_history->low_fruit_veggie_intake,

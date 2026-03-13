@@ -23,6 +23,7 @@ class MedicalHistory extends Model
         'blood_pressure',
         'height',
         'weight',
+        'heart_rate',
         'smoking',
         'alcohol_consumption',
         'low_fruit_veggie_intake',

@@ -141,7 +141,7 @@
                             <label for="">Tekanan darah</label>
                         </div>
                         <div class="col-lg-10">
-                            <input type="number" name="blood_presure" class="form-control" value="{{ $data->medicalHistory->blood_presure }}">
+                            <input type="number" name="blood_presure" class="form-control" value="{{ $data->medicalHistory->blood_pressure }}">
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -181,7 +181,7 @@
                     </textarea>
                     <label for="summernote2" class="fw-bold">Assessment</label>
                     <textarea id="summernote2" name="assesment" class="form-control">
-                        {{ $data->medicalHistory->medical_records->assesment ?? '' }}
+                        {{ $data->medicalHistory->medical_records->assessment ?? '' }}
                     </textarea>
 
                     <label for="summernote3" class="fw-bold mt-5">Plan</label>
