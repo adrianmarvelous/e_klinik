@@ -16,6 +16,7 @@
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Role</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,6 +51,11 @@
                                     </form>
 
 
+                                </td>
+                                <td>
+                                    @if ($item->getRoleNames()->first() == 'patient')
+                                        <a class="btn btn-primary" href="{{ route('users.patient_show',['id' => $item->id]) }}">Edit</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

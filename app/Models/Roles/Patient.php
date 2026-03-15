@@ -10,6 +10,7 @@ class Patient extends Model
 {
     protected $table = 'patients';
     protected $fillable = [
+        'no_rm',
         'user_id', // Assuming you want to set the ID manually
         'date_of_birth',
         'gender',

@@ -11,6 +11,14 @@
                         <h2>Data Pasien</h2>
                         <div class="row">
                             <div class="col-lg-3">
+                                <p class="fw-bold">No Rekam medis</p>
+                            </div>
+                            <div class="col-lg-9">
+                                <p>{{ $data->patient->no_rm }}</p>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-lg-3">
                                 <p class="fw-bold">Nama</p>
                             </div>
                             <div class="col-lg-9">

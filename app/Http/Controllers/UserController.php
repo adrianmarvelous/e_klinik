@@ -41,11 +41,14 @@ class UserController extends Controller
     }
     public function create_patient()
     {
-        return view('users.create_patient');
+        $no_rm = (Patient::max('no_rm') ?? 0) + 1;
+
+        return view('users.create_patient', compact('no_rm'));
     }
     public function store_patient(Request $request)
     {
         $validated = $request->validate([
+            'no_rm' => ['required', 'integer', new SafeInput()],
             'name' => ['required', 'string', 'max:255', new SafeInput()],
             'email' => ['required', 'email', 'max:255'],
             'dateofbirth' => ['required', 'date'],
@@ -69,6 +72,7 @@ class UserController extends Controller
 
                 // 2️⃣ Create Patient
                 $patient = Patient::create([
+                    'no_rm' => $validated['no_rm'],
                     'user_id' => $user->id,
                     'date_of_birth' => $validated['dateofbirth'],
                     'gender' => $validated['gender'],
@@ -91,6 +95,7 @@ class UserController extends Controller
         $patient = Patient::findOrFail($id);
 
         $validated = $request->validate([
+            // 'no_rm' => ['required', 'integer', new SafeInput()],
             'name' => ['required', 'string', 'max:255', new SafeInput()],
             'email' => ['required', 'email', 'max:255'],
             'dateofbirth' => ['required', 'date'],
@@ -112,6 +117,7 @@ class UserController extends Controller
 
                 // 2️⃣ Update patient
                 $patient->update([
+                    // 'no_rm' => $validated['no_rm'],
                     'date_of_birth' => $validated['dateofbirth'],
                     'gender' => $validated['gender'],
                     'phone' => $validated['phone'],
@@ -122,7 +128,7 @@ class UserController extends Controller
                 $this->savePatientFiles($request, $patient);
             });
 
-            return redirect()->route('dashboard')->with('success', 'Profil pasien berhasil diperbarui');
+            return redirect()->route('users.index')->with('success', 'Profil pasien berhasil diperbarui');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal update data: ' . $e->getMessage());
         }
@@ -152,6 +158,14 @@ class UserController extends Controller
         }
 
         $patient->save();
+    }
+    public function patient_show($id)
+    {
+        $patient = Patient::with('user')->where('user_id',$id)->first();
+        $no_rm = $patient->no_rm;
+
+        return view('users.create_patient', compact('patient','no_rm'));
+
     }
 
     /**

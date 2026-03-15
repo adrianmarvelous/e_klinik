@@ -18,6 +18,16 @@
 
                     <div class="row mt-3">
                         <div class="col-lg-2">
+                            <label for="no_rm">No Rekam Medis</label>
+                        </div>
+                        <div class="col-lg-10">
+                            <input type="text" name="no_rm" class="form-control" placeholder="Masukan No Rekam Medis"
+                                value="{{ old('no_rm', $patient->no_rm ?? $no_rm) }}" {{ isset($patient) ? 'readonly' : '' }}>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-lg-2">
                             <label for="name">Nama</label>
                         </div>
                         <div class="col-lg-10">
@@ -32,7 +42,7 @@
                         </div>
                         <div class="col-lg-10">
                             <input type="email" name="email" class="form-control" placeholder="Masukan E-mail Anda"
-                                value="{{ old('email', $patient->user->name ?? '') }}">
+                                value="{{ old('email', $patient->user->email ?? '') }}">
                         </div>
                     </div>
 
