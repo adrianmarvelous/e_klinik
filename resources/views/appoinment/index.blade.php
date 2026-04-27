@@ -123,7 +123,7 @@
 
                                             @endif
                                         @elseif (session('user.roles') == 'patient')
-                                            <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
+                                            <a class="btn btn-primary" href="{{ route('medical.show',['medical' => $item->id]) }}"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
                                         @elseif (session('user.roles') == 'doctor')
                                             <a class="btn btn-primary" href=""  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail"><i class="fa fa-list"></i></a>
                                         @endif

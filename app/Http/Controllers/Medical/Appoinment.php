@@ -376,6 +376,7 @@ class Appoinment extends Controller
 
         $user_id = session('user.id');
         $patient_id = Patient::where('user_id', $user_id)->value('id');
+        $patients = Patient::with('user')->where('id', $patient_id)->get();
         // $doctors = User::role('patient')
         //     ->with(['polis.appointments' => function ($q) use ($patient_id) {
         //         $q->where('patient_id', $patient_id)
@@ -393,7 +394,7 @@ class Appoinment extends Controller
             ])->get();
         // dd($doctors);
         $polis = Polis::all();
-        return view('appoinment.create', compact('data', 'doctors', 'patient_id', 'polis'));
+        return view('appoinment.create', compact('patients', 'data', 'doctors', 'patient_id', 'polis'));
     }
 
     /**

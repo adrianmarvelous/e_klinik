@@ -93,11 +93,11 @@
                     </div>
                     <div class="row mt-3">
                         <div class="col-lg-2">
-                            <label for="address">Riwayat Penyakit Terdahulu</label>
+                            <label for="previous_illnes">Riwayat Penyakit Terdahulu</label>
                         </div>
                         <div class="col-lg-10">
-                            <input type="text" name="previous_illnes" class="form-control" placeholder="Masukan Alamat Anda"
-                                value="{{ old('address', $patient->previous_illnes ?? '') }}">
+                            <input type="text" name="previous_illnes" class="form-control" placeholder="Masukan Riwayat Penyakit Terdahulu"
+                                value="{{ old('previous_illnes', $patient->previous_illnes ?? '') }}">
                         </div>
                     </div>
                     <div class="row mt-3">

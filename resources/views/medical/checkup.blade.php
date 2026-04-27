@@ -196,42 +196,46 @@
                     <textarea id="summernote3" name="plan" class="form-control">
                         {{ $data->medicalHistory->medical_records->plan ?? '' }}
                     </textarea>
-                    <div class="mt-3">
-                        <label for="" class="fw-bold">Pilih Dokter atau Fisioterapi</label>
-                        <select name="doctor_id" class="form-select" required>
-                            <option value="" disabled
-                                {{ old('doctor_id', optional($data->medicalHistory->doctor)->id) ? '' : 'selected' }}>
-                                Pilih Salah Satu
-                            </option>
-
-                            @foreach ($doctors as $doctor)
-                                <option value="{{ $doctor->id }}"
-                                    {{ old('doctor_id', optional($data->medicalHistory->doctor)->id) == $doctor->id ? 'selected' : '' }}>
-                                    {{ $doctor->name }}
+                    @if (session('user.roles') == 'admin')
+                        <div class="mt-3">
+                            <label for="" class="fw-bold">Pilih Dokter atau Fisioterapi</label>
+                            <select name="doctor_id" class="form-select" required>
+                                <option value="" disabled
+                                    {{ old('doctor_id', optional($data->medicalHistory->doctor)->id) ? '' : 'selected' }}>
+                                    Pilih Salah Satu
                                 </option>
-                            @endforeach
-                        </select>
+
+                                @foreach ($doctors as $doctor)
+                                    <option value="{{ $doctor->id }}"
+                                        {{ old('doctor_id', optional($data->medicalHistory->doctor)->id) == $doctor->id ? 'selected' : '' }}>
+                                        {{ $doctor->name }}
+                                    </option>
+                                @endforeach
+                            </select>
 
 
-                    </div>
+                        </div>
+                    @endif
                 </div>
 
 
-                {{-- === Jadwal Pemeriksaan === --}}
-                <div class="mt-4">
-                    <h5>Jadwal Pemeriksaan</h5>
-                    <div id="tanggalContainer" class="mt-2"></div>
-                    <button type="button" id="btnTambahJadwal" class="btn btn-primary mt-2">
-                        Tambah Jadwal
-                    </button>
-                </div>
-                <div class="d-flex justify-content-end mt-3">
-                    <input type="hidden" name="medical_history_id" value="{{ $data->medical_history_id }}">
-                    <input type="hidden" name="poli_id" value="{{ $data->poli_id }}">
-                    <button class="btn btn-primary" type="submit">
-                        {{ isset($data->medicalHistory->medical_records->id) ? 'Update' : 'Simpan' }}
-                    </button>
-                </div>
+                    @if (session('user.roles') == 'admin')
+                        {{-- === Jadwal Pemeriksaan === --}}
+                        <div class="mt-4">
+                            <h5>Jadwal Pemeriksaan</h5>
+                            <div id="tanggalContainer" class="mt-2"></div>
+                            <button type="button" id="btnTambahJadwal" class="btn btn-primary mt-2">
+                                Tambah Jadwal
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            <input type="hidden" name="medical_history_id" value="{{ $data->medical_history_id }}">
+                            <input type="hidden" name="poli_id" value="{{ $data->poli_id }}">
+                            <button class="btn btn-primary" type="submit">
+                                {{ isset($data->medicalHistory->medical_records->id) ? 'Update' : 'Simpan' }}
+                            </button>
+                        </div>
+                    @endif
             </form>
         </div>
     </div>
