@@ -42,7 +42,7 @@ class PatientController extends Controller
 
             // 📁 Files
             'file_1' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_2' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
+            // 'file_2' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         try {
@@ -74,12 +74,12 @@ class PatientController extends Controller
                 }
 
                 // 4️⃣ Handle File 2
-                if ($request->hasFile('file_2')) {
-                    $file = $request->file('file_2');
-                    $filename = time() . '_2_' . 'file_2';
-                    $file->storeAs('patients', $filename, 'public');
-                    $patient->file_2 = $filename;
-                }
+                // if ($request->hasFile('file_2')) {
+                //     $file = $request->file('file_2');
+                //     $filename = time() . '_2_' . 'file_2';
+                //     $file->storeAs('patients', $filename, 'public');
+                //     $patient->file_2 = $filename;
+                // }
 
                 $patient->save();
             });

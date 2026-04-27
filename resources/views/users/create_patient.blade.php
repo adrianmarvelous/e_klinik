@@ -117,7 +117,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="row mt-3">
+                    {{-- <div class="row mt-3">
                         <div class="col-lg-2">
                             <label class="fw-bold">Upload Hasil Lab / CT Scan</label>
                         </div>
@@ -133,7 +133,7 @@
                                 </small>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
 
 
                     <div class="d-flex justify-content-end mt-3">
